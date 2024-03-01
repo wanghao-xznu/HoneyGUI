@@ -93,27 +93,97 @@ static void tab_prepare(gui_obj_t *obj)
     gui_tab_t *this = (gui_tab_t *)obj;
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
+    kb_info_t *kb = kb_get_info();
     gui_tabview_t *parent = (gui_tabview_t *)(obj->parent);
 
     if (this->style == CLASSIC)
     {
-        obj->tx += (this->id.x - parent->cur_id.x) * (int)this->base.w;
-        obj->ty += (this->id.y - parent->cur_id.y) * (int)this->base.h;
-        return;
+        matrix_translate((this->id.x - parent->cur_id.x) * (int)this->base.w + parent->release_x, \
+                         (this->id.y - parent->cur_id.y) * (int)this->base.h + parent->release_y, \
+                         obj->matrix);
+    }
+    else if (this->style == TAB_ROTATE)
+    {
+        float w = this->base.w;
+        float h = this->base.h;
+
+        Vertex_t v0 = {-w, -h, 0};
+        Vertex_t v1 = {w,  -h, 0};
+        Vertex_t v2 = {w,  h,  0};
+        Vertex_t v3 = {-w, h,  0};
+
+        Vertex_t tv0, tv1, tv2, tv3;
+        Vertex_t rv0, rv1, rv2, rv3;
+
+        gui_matrix_t rotate_3D;
+        float rotate_degree = 90 * parent->release_x / (this->base.w / 2);
+
+        if (rotate_degree >= 90)
+        {
+
+        }
+
+        matrix_compute_rotate(0, rotate_degree, 0, &rotate_3D);
+
+        matrix_transfrom_rotate(&rotate_3D, &v0, &tv0, 0, 0, 0);
+        matrix_transfrom_rotate(&rotate_3D, &v1, &tv1, 0, 0, 0);
+        matrix_transfrom_rotate(&rotate_3D, &v2, &tv2, 0, 0, 0);
+        matrix_transfrom_rotate(&rotate_3D, &v3, &tv3, 0, 0, 0);
+
+        matrix_compute_rotate(0, 0, 0, &rotate_3D);
+        float xoff = (float)dc->screen_width / 2;
+        float yoff = (float)dc->screen_height / 2 ;
+        float zoff = -(xoff + yoff);
+
+        matrix_transfrom_rotate(&rotate_3D, &tv0, &rv0, xoff, yoff, zoff);
+        matrix_transfrom_rotate(&rotate_3D, &tv1, &rv1, xoff, yoff, zoff);
+        matrix_transfrom_rotate(&rotate_3D, &tv2, &rv2, xoff, yoff, zoff);
+        matrix_transfrom_rotate(&rotate_3D, &tv3, &rv3, xoff, yoff, zoff);
+        Vertex_t p = {(float)(dc->screen_width) / 2, (float)(dc->screen_height) / 2, -zoff};
+        gui_matrix_t temp;
+        matrix_transfrom_blit(this->base.w, this->base.h, &p, &rv0, &rv1, &rv2, &rv3,
+                              &temp);
+
+        matrix_translate((this->id.x - parent->cur_id.x) * (int)this->base.w, \
+                         (this->id.y - parent->cur_id.y) * (int)this->base.h, \
+                         obj->matrix);
+        matrix_multiply(obj->matrix, &temp);
+
+    }
+    else if (this->style == REDUCTION)
+    {
+
+        matrix_translate((this->id.x - parent->cur_id.x) * (int)this->base.w + parent->release_x, \
+                         (this->id.y - parent->cur_id.y) * (int)this->base.h + parent->release_y, \
+                         obj->matrix);
+
+
+        int sx = abs((this->id.x - parent->cur_id.x) * (int)this->base.w + parent->release_x);
+        sx = sx % this->base.w;
+        float s = 1.0f - (float)sx / this->base.w;
+
+        if (s < 0.2f)
+        {
+            s = 0.2f;
+        }
+        if (s >= 1.0f)
+        {
+            s = 1.0f;
+        }
+
+        matrix_translate(dc->screen_width / 2, dc->screen_height / 2, obj->matrix);
+        matrix_scale(s, s, obj->matrix);
+        matrix_translate(-dc->screen_width / 2, -dc->screen_height / 2, obj->matrix);
     }
     else if (this->style == FADE)
     {
-        obj->tx += (this->id.x - parent->cur_id.x) * (int)this->base.w;
-        obj->ty += (this->id.y - parent->cur_id.y) * (int)this->base.h;
-
         tab_prepare_fade(obj);
     }
     else if (this->style == REDUCTION_FADE)
     {
         float s;
-        obj->tx = (this->id.x - parent->cur_id.x) * (int)this->base.w;
-        obj->ty = (this->id.y - parent->cur_id.y) * (int)this->base.h;
-        int sx = abs(obj->dx + obj->ax + obj->tx);
+
+        int sx = abs((this->id.x - parent->cur_id.x) * (int)this->base.w + parent->release_x);
         sx = sx % this->base.w;
         s = 1.0f - (float)sx / this->base.w;
 
@@ -125,31 +195,11 @@ static void tab_prepare(gui_obj_t *obj)
         {
             s = 1.0f;
         }
-        obj->sx = s;
-        obj->sy = s;
+
         tab_prepare_fade(obj);
     }
-    else if (this->style == REDUCTION)
-    {
-        float s;
-        obj->tx = (this->id.x - parent->cur_id.x) * (int)this->base.w;
-        obj->ty = (this->id.y - parent->cur_id.y) * (int)this->base.h;
-        int sx = abs(obj->dx + obj->ax + obj->tx);
-        sx = sx % this->base.w;
-        s = 1.0f - (float)sx / this->base.w;
 
-        if (s < 0.2f)
-        {
-            s = 0.2f;
-        }
-        if (s >= 1.0f)
-        {
-            s = 1.0f;
-        }
-        obj->sx = s;
-        obj->sy = s;
-    }
-    kb_info_t *kb = kb_get_info();
+
     if ((kb->type == KB_SHORT) && (obj->event_dsc_cnt > 0))
     {
         gui_obj_event_set(obj, GUI_EVENT_KB_SHORT_CLICKED);
@@ -224,7 +274,7 @@ static void tab_prepare_fade(gui_obj_t *obj)
         // slide right delta > 0, slide left delta < 0
         float slide_dir = (tp->deltaX > 0) ? 1.f : (tp->deltaX < 0) ? -1.f : 0;
         // slide right dx > 0, slide left dx < 0
-        float fade_percent = 1.f + (fade_dir * slide_dir * obj->dx) / this->base.w;
+        float fade_percent = 1.f + (fade_dir * slide_dir * 0/*todo*/) / this->base.w;
 
         tab_root_img_fade(obj, fade_percent, fade_percent);
     }

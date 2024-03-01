@@ -91,15 +91,11 @@ static void canvas_design(gui_canvas_t *canvas)
     gui_dispdev_t *dc = gui_get_dc();
     NVGcontext *vg = canvas->vg;
     gui_canvas_t *this = canvas;
+    gui_obj_t *obj = (gui_obj_t *)this;
+
     nvgResetTransform(vg);
-    nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-    nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-    nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-    nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                 dc->screen_height / 2 - GET_BASE(this)->y);
-    nvgScale(vg, this->base.sx, this->base.sy);
-    nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                 -(dc->screen_height / 2 - GET_BASE(this)->y));
+    nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                 obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
     nvgBeginPath(canvas->vg);
     nvgRoundedRect(canvas->vg, 0, 0, GET_BASE(canvas)->w, GET_BASE(canvas)->h, 37);
     nvgFillColor(canvas->vg, nvgRGB(0x7C, 0x7A, 0xEB));
@@ -132,21 +128,10 @@ static void canvas_design(gui_canvas_t *canvas)
         float x = width / 2;
         float y = height;
 
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
-        nvgTranslate(vg, -GET_BASE(this)->x, -GET_BASE(this)->y);
-        nvgTranslate(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2,
-                     GET_BASE(this)->y + GET_BASE(this)->h / 2);
-        nvgRotate(vg, M_PI * (d / 60.0f / 60.0f));
-        nvgTranslate(vg, -(GET_BASE(this)->x + GET_BASE(this)->w / 2),
-                     -(GET_BASE(this)->y + GET_BASE(this)->h / 2));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
         nvgRoundedRect(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2 - x,
                        GET_BASE(this)->y + GET_BASE(this)->h / 2 - y, width, height, 0);
@@ -164,14 +149,10 @@ static void canvas_design(gui_canvas_t *canvas)
         a1 = a0 - NVG_PI / 1.7f;
         nvgResetTransform(vg);
         nvgBeginPath(vg);
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
         nvgArc(vg, GET_BASE(canvas)->w / 2, GET_BASE(canvas)->h / 2, r1, a1, a0, NVG_CW);
         nvgArc(vg, GET_BASE(canvas)->w / 2, GET_BASE(canvas)->h / 2, r0, a0, a1, NVG_CCW);
         nvgClosePath(vg);
@@ -196,21 +177,10 @@ static void canvas_design(gui_canvas_t *canvas)
         float x = width / 2;
         float y = height + (20 + 3) * WATCHFACE_GRADIENT_SCLAE;
 
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
-        nvgTranslate(vg, -GET_BASE(this)->x, -GET_BASE(this)->y);
-        nvgTranslate(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2,
-                     GET_BASE(this)->y + GET_BASE(this)->h / 2);
-        nvgRotate(vg, M_PI * (d / 60.0f / 60.0f));
-        //nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(GET_BASE(this)->x + GET_BASE(this)->w / 2),
-                     -(GET_BASE(this)->y + GET_BASE(this)->h / 2));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
         nvgRoundedRect(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2 - x,
                        GET_BASE(this)->y + GET_BASE(this)->h / 2 - y, width, height, width / 2);
@@ -228,21 +198,10 @@ static void canvas_design(gui_canvas_t *canvas)
         float x = width / 2;
         float y = height + (20 + 3 + 3) * WATCHFACE_GRADIENT_SCLAE;
 
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
-        nvgTranslate(vg, -GET_BASE(this)->x, -GET_BASE(this)->y);
-        nvgTranslate(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2,
-                     GET_BASE(this)->y + GET_BASE(this)->h / 2);
-        nvgRotate(vg, M_PI * (d / 60.0f / 60.0f));
-        //nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(GET_BASE(this)->x + GET_BASE(this)->w / 2),
-                     -(GET_BASE(this)->y + GET_BASE(this)->h / 2));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
         nvgRoundedRect(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2 - x,
                        GET_BASE(this)->y + GET_BASE(this)->h / 2 - y, width, height, width / 2);
@@ -263,21 +222,10 @@ static void canvas_design(gui_canvas_t *canvas)
         float x = width / 2;
         float y = height;
 
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
-        nvgTranslate(vg, -GET_BASE(this)->x, -GET_BASE(this)->y);
-        nvgTranslate(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2,
-                     GET_BASE(this)->y + GET_BASE(this)->h / 2);
-        nvgRotate(vg, M_PI * (d / 5.0f));
-        //nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(GET_BASE(this)->x + GET_BASE(this)->w / 2),
-                     -(GET_BASE(this)->y + GET_BASE(this)->h / 2));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
         nvgRoundedRect(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2 - x,
                        GET_BASE(this)->y + GET_BASE(this)->h / 2 - y, width, height, width / 2);
@@ -295,14 +243,10 @@ static void canvas_design(gui_canvas_t *canvas)
         a1 = a0 - NVG_PI / 1.7f;
         nvgResetTransform(vg);
         nvgBeginPath(vg);
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
         nvgArc(vg, GET_BASE(canvas)->w / 2, GET_BASE(canvas)->h / 2, r1, a1, a0, NVG_CW);
         nvgArc(vg, GET_BASE(canvas)->w / 2, GET_BASE(canvas)->h / 2, r0, a0, a1, NVG_CCW);
         nvgClosePath(vg);
@@ -333,21 +277,10 @@ static void canvas_design(gui_canvas_t *canvas)
         float x = width / 2;
         float y = height + (20 + 5) * WATCHFACE_GRADIENT_SCLAE;
 
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
-        nvgTranslate(vg, -GET_BASE(this)->x, -GET_BASE(this)->y);
-        nvgTranslate(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2,
-                     GET_BASE(this)->y + GET_BASE(this)->h / 2);
-        nvgRotate(vg, M_PI * (d / 5.0f));
-        //nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(GET_BASE(this)->x + GET_BASE(this)->w / 2),
-                     -(GET_BASE(this)->y + GET_BASE(this)->h / 2));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
         nvgRoundedRect(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2 - x,
                        GET_BASE(this)->y + GET_BASE(this)->h / 2 - y, width, height, width / 2);
@@ -365,21 +298,10 @@ static void canvas_design(gui_canvas_t *canvas)
         float x = width / 2;
         float y = height + (20 + 5 + 3) * WATCHFACE_GRADIENT_SCLAE;
 
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
-        nvgTranslate(vg, -GET_BASE(this)->x, -GET_BASE(this)->y);
-        nvgTranslate(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2,
-                     GET_BASE(this)->y + GET_BASE(this)->h / 2);
-        nvgRotate(vg, M_PI * (d / 5.0f));
-        //nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(GET_BASE(this)->x + GET_BASE(this)->w / 2),
-                     -(GET_BASE(this)->y + GET_BASE(this)->h / 2));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
         nvgRoundedRect(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2 - x,
                        GET_BASE(this)->y + GET_BASE(this)->h / 2 - y, width, height, width / 2);
@@ -393,22 +315,10 @@ static void canvas_design(gui_canvas_t *canvas)
         cy = GET_BASE(canvas)->h / 2;
         nvgResetTransform(vg);
         nvgBeginPath(vg);
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
-
-        nvgTranslate(vg, -GET_BASE(this)->x, -GET_BASE(this)->y);
-        nvgTranslate(vg, GET_BASE(this)->x + GET_BASE(this)->w / 2,
-                     GET_BASE(this)->y + GET_BASE(this)->h / 2);
-        nvgRotate(vg, M_PI * (d / 1.0f));
-        //nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(GET_BASE(this)->x + GET_BASE(this)->w / 2),
-                     -(GET_BASE(this)->y + GET_BASE(this)->h / 2));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
         nvgRect(vg, GET_BASE(this)->x + cx, GET_BASE(this)->y + cy, cx * 2, cy * 1.3f);
 
         nvgClosePath(vg);
@@ -427,14 +337,9 @@ static void canvas_design(gui_canvas_t *canvas)
     {
         //for sceond point
         nvgResetTransform(vg);
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
         nvgBeginPath(vg);
         nvgCircle(vg, GET_BASE(canvas)->w / 2, GET_BASE(canvas)->h / 2, 15.0f / 2.0f);
         nvgFillColor(vg, nvgRGBA(255, 255, 255, 1 * 255));
@@ -443,29 +348,20 @@ static void canvas_design(gui_canvas_t *canvas)
     {
         //for sceond point
         nvgResetTransform(vg);
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-        nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                     dc->screen_height / 2 - GET_BASE(this)->y);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                     -(dc->screen_height / 2 - GET_BASE(this)->y));
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
         nvgBeginPath(vg);
         nvgCircle(vg, GET_BASE(canvas)->w / 2, GET_BASE(canvas)->h / 2, 7.0f / 2.0f);
         nvgFillColor(vg, nvgRGBA(0, 0, 0, 1 * 255));
         nvgFill(vg);
     }
-    nvgResetTransform(vg);
 
-    nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-    nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-    nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-    nvgTranslate(vg, dc->screen_width / 2 - GET_BASE(this)->x,
-                 dc->screen_height / 2 - GET_BASE(this)->y);
-    nvgScale(vg, this->base.sx, this->base.sy);
-    nvgTranslate(vg, -(dc->screen_width / 2 - GET_BASE(this)->x),
-                 -(dc->screen_height / 2 - GET_BASE(this)->y));
+    nvgResetTransform(vg);
+    //todo for degree by howie
+    nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                 obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
     nvgBeginPath(vg);
     nvgRoundedRect(vg, -dc->screen_width, -dc->screen_height - GET_BASE(this)->y, dc->screen_width,
@@ -518,13 +414,10 @@ static void widget_nanovg_draw_cb(gui_obj_t *obj)
         this->vg = vg;
         nvgResetTransform(vg);
 
-        nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-        nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-        nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-
-        nvgTranslate(vg, dc->screen_width / 2, dc->screen_height / 2);
-        nvgScale(vg, this->base.sx, this->base.sy);
-        nvgTranslate(vg, -dc->screen_width / 2, -dc->screen_height / 2);
+        nvgResetTransform(vg);
+        //todo for degree by howie
+        nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                     obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
 
         this->nanovg_canvas_cb(this);

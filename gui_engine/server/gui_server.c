@@ -20,74 +20,20 @@
 #include <string.h>
 #include <gui_app.h>
 #include "acc_engine.h"
-#include "gui_win.h"
 
 static void *gui_server_mq = NULL;
 static void (*gui_task_ext_execution_hook)(void) = NULL;
 bool GUI_SERVER_ALLOW_DLPS = false;
-static uint32_t daemon_start_ms = 0;
-static uint32_t daemon_cnt = 0;
-static gui_event_t server_event_code;
 
-bool gui_server_dlps_check(void)
+
+static void gui_server_msg_handler(gui_msg_t *msg)
 {
-    return GUI_SERVER_ALLOW_DLPS;
+
 }
-
-static void gui_server_event_handler(gui_obj_t *obj)
-{
-    gui_list_t *node = NULL;
-    gui_list_for_each(node, &obj->child_list)
-    {
-        gui_obj_t *obj = gui_list_entry(node, gui_obj_t, brother_list);
-        if (server_event_code != GUI_EVENT_INVALIDE)
-        {
-            for (uint32_t i = 0; i < obj->event_dsc_cnt; i++)
-            {
-                gui_event_dsc_t *event_dsc = obj->event_dsc + i;
-                if (event_dsc->filter == server_event_code)
-                {
-                    event_dsc->event_cb(obj, server_event_code);
-                }
-            }
-        }
-        gui_server_event_handler(obj);
-    }
-}
-
-static void gui_server_msg_handler(gui_obj_t *screen, gui_msg_t *msg)
-{
-    bool event_handle = true;
-
-    if (msg->type == GUI_EVENT_DISPLAY_ON)
-    {
-        if (GUI_SERVER_ALLOW_DLPS)
-        {
-            GUI_SERVER_ALLOW_DLPS = false;
-            gui_display_on();
-            gui_fb_change();
-            daemon_cnt = 0;
-            daemon_start_ms = 0;
-        }
-        event_handle = false;
-    }
-    else
-    {
-        server_event_code = (gui_event_t)msg->type;
-    }
-
-    if (event_handle)
-    {
-        gui_server_event_handler(screen);
-        server_event_code = GUI_EVENT_INVALIDE;
-    }
-}
-
 void gui_task_ext_execution_sethook(void (*hook)(void))
 {
     gui_task_ext_execution_hook = hook;
 }
-
 
 bool send_msg_to_gui_server(gui_msg_t *msg)
 {
@@ -106,6 +52,9 @@ bool send_msg_to_gui_server(gui_msg_t *msg)
         return false;
     }
 }
+
+static uint32_t daemon_start_ms = 0;
+static uint32_t daemon_cnt = 0;
 
 /**
  * @brief
@@ -241,27 +190,29 @@ static void gui_server_entry(void *parameter)
         continue;
 #endif
 
-        gui_msg_t msg;
         if ((gui_ms_get() - daemon_start_ms) > app->active_ms)
         {
             gui_log("line %d, aemon_start_ms time = %dms, current = %dms, app->active_ms = %dms \n",
                     __LINE__, daemon_start_ms, gui_ms_get(), app->active_ms);
-
+            gui_msg_t msg;
             gui_display_off();
             GUI_SERVER_ALLOW_DLPS = true;
-            while (GUI_SERVER_ALLOW_DLPS)
+            if (true == gui_mq_recv(gui_server_mq, &msg, sizeof(gui_msg_t), 0xFFFFFFFF))
             {
-                if (true == gui_mq_recv(gui_server_mq, &msg, sizeof(gui_msg_t), 0xFFFFFFFF))
-                {
-                    gui_server_msg_handler(screen, &msg);//screen on event set GUI_SERVER_ALLOW_DLPS false
-                }
+                gui_server_msg_handler(&msg);
             }
-        }
-        while (true == gui_mq_recv(gui_server_mq, &msg, sizeof(gui_msg_t), 0))
-        {
-            gui_server_msg_handler(screen, &msg);
+            GUI_SERVER_ALLOW_DLPS = false;
+            gui_display_on();
+            gui_fb_change();
+            daemon_cnt = 0;
+            daemon_start_ms = 0;
         }
     }
+}
+
+bool gui_server_dlps_check(void)
+{
+    return GUI_SERVER_ALLOW_DLPS;
 }
 
 /**

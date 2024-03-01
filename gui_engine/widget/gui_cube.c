@@ -221,13 +221,10 @@ static void cube_prepare(gui_obj_t *obj)
     touch_info_t *tp = (touch_info_t *)tp_get_info();
     gui_obj_t *root = (gui_obj_t *)obj;
     // Scale the cube to proper size
-    float cbsize = this->cbsize * root->sx;
+    float cbsize = this->cbsize;
     // Translate the cube to the center of framebuffer.
-    float xoff = (this->c_x - dc->screen_width / 2) * root->sx + dc->screen_width / 2;
-    float yoff = (this->c_y - dc->screen_height / 2) * root->sy + dc->screen_height / 2;
-
-    xoff = xoff + obj->dx + obj->ax + obj->tx;
-    yoff = yoff + obj->dy + obj->ay + obj->ty;
+    float xoff = (this->c_x - dc->screen_width / 2) + dc->screen_width / 2;
+    float yoff = (this->c_y - dc->screen_height / 2) + dc->screen_height / 2;
 
     scale_cube(&cube_v0, cbsize);
     scale_cube(&cube_v1, cbsize);
@@ -284,8 +281,13 @@ static void cube_prepare(gui_obj_t *obj)
     if (this->nz0321 > 0.0f)
     {
         transfrom_blit(front->img_w, front->img_h, &rv0, &rv3, &rv2, &rv1, &matrix);
-        memcpy(front->matrix, &matrix, sizeof(struct gui_matrix));
-        memcpy(front->inverse, &matrix, sizeof(struct gui_matrix));
+
+        gui_matrix_t tmp;
+        memcpy(&tmp, obj->matrix, sizeof(struct gui_matrix));
+        matrix_multiply(&tmp, &matrix);
+
+        memcpy(front->matrix, &tmp, sizeof(struct gui_matrix));
+        memcpy(front->inverse, &tmp, sizeof(struct gui_matrix));
         matrix_inverse(front->inverse);
         gui_image_new_area(front);
     }
@@ -293,8 +295,11 @@ static void cube_prepare(gui_obj_t *obj)
     if (this->nz4567 > 0.0f)
     {
         transfrom_blit(back->img_w, back->img_h, &rv4, &rv5, &rv6, &rv7, &matrix);
-        memcpy(back->matrix, &matrix, sizeof(struct gui_matrix));
-        memcpy(back->inverse, &matrix, sizeof(struct gui_matrix));
+        gui_matrix_t tmp;
+        memcpy(&tmp, obj->matrix, sizeof(struct gui_matrix));
+        matrix_multiply(&tmp, &matrix);
+        memcpy(back->matrix, &tmp, sizeof(struct gui_matrix));
+        memcpy(back->inverse, &tmp, sizeof(struct gui_matrix));
         matrix_inverse(back->inverse);
         gui_image_new_area(back);
     }
@@ -302,8 +307,11 @@ static void cube_prepare(gui_obj_t *obj)
     if (this->nz5126 > 0.0f)
     {
         transfrom_blit(up->img_w, up->img_h, &rv5, &rv1, &rv2, &rv6, &matrix);
-        memcpy(up->matrix, &matrix, sizeof(struct gui_matrix));
-        memcpy(up->inverse, &matrix, sizeof(struct gui_matrix));
+        gui_matrix_t tmp;
+        memcpy(&tmp, obj->matrix, sizeof(struct gui_matrix));
+        matrix_multiply(&tmp, &matrix);
+        memcpy(up->matrix, &tmp, sizeof(struct gui_matrix));
+        memcpy(up->inverse, &tmp, sizeof(struct gui_matrix));
         matrix_inverse(up->inverse);
         gui_image_new_area(up);
     }
@@ -311,8 +319,11 @@ static void cube_prepare(gui_obj_t *obj)
     if (this->nz0473 > 0.0f)
     {
         transfrom_blit(down->img_w, down->img_h, &rv0, &rv4, &rv7, &rv3, &matrix);
-        memcpy(down->matrix, &matrix, sizeof(struct gui_matrix));
-        memcpy(down->inverse, &matrix, sizeof(struct gui_matrix));
+        gui_matrix_t tmp;
+        memcpy(&tmp, obj->matrix, sizeof(struct gui_matrix));
+        matrix_multiply(&tmp, &matrix);
+        memcpy(down->matrix, &tmp, sizeof(struct gui_matrix));
+        memcpy(down->inverse, &tmp, sizeof(struct gui_matrix));
         matrix_inverse(down->inverse);
         gui_image_new_area(down);
     }
@@ -320,8 +331,11 @@ static void cube_prepare(gui_obj_t *obj)
     if (this->nz7623 > 0.0f)
     {
         transfrom_blit(left->img_w, left->img_h, &rv7, &rv6, &rv2, &rv3, &matrix);
-        memcpy(left->matrix, &matrix, sizeof(struct gui_matrix));
-        memcpy(left->inverse, &matrix, sizeof(struct gui_matrix));
+        gui_matrix_t tmp;
+        memcpy(&tmp, obj->matrix, sizeof(struct gui_matrix));
+        matrix_multiply(&tmp, &matrix);
+        memcpy(left->matrix, &tmp, sizeof(struct gui_matrix));
+        memcpy(left->inverse, &tmp, sizeof(struct gui_matrix));
         matrix_inverse(left->inverse);
         gui_image_new_area(left);
     }
@@ -329,8 +343,11 @@ static void cube_prepare(gui_obj_t *obj)
     if (this->nz0154 > 0.0f)
     {
         transfrom_blit(right->img_w, right->img_h, &rv0, &rv1, &rv5, &rv4, &matrix);
-        memcpy(right->matrix, &matrix, sizeof(struct gui_matrix));
-        memcpy(right->inverse, &matrix, sizeof(struct gui_matrix));
+        gui_matrix_t tmp;
+        memcpy(&tmp, obj->matrix, sizeof(struct gui_matrix));
+        matrix_multiply(&tmp, &matrix);
+        memcpy(right->matrix, &tmp, sizeof(struct gui_matrix));
+        memcpy(right->inverse, &tmp, sizeof(struct gui_matrix));
         matrix_inverse(right->inverse);
         gui_image_new_area(right);
     }

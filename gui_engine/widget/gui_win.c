@@ -91,77 +91,67 @@ static void win_prepare(gui_obj_t *obj)
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
     kb_info_t *kb = kb_get_info();
-    if (GUI_TYPE(gui_win_t, obj)->event5_flag)
-    {
-        gui_obj_event_set(obj, GUI_EVENT_5);
-        GUI_TYPE(gui_win_t, obj)->event5_flag = false;
-    }
-
     if (kb->pressed == true)
     {
         gui_obj_event_set(obj, GUI_EVENT_KB_DOWN_PRESSED);
     }
-    if ((obj->ax < (int)gui_get_screen_width()) && ((obj->ax + obj->w) >= 0) && \
-        (obj->ay < (int)gui_get_screen_height()) && ((obj->ay + obj->h) >= 0))
-    {
-        if (((tp->x >= obj->ax && tp->x <= (obj->ax + obj->w)) &&
-             (tp->y >= obj->ay && tp->y <= (obj->ay + obj->h))))
-        {
-            gui_win_t *b = (void *)obj;
-            switch (tp->type)
-            {
-            case TOUCH_SHORT:
-                {
-                    gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
-                }
-                break;
-            case TOUCH_UP_SLIDE:
-                {
-                    gui_obj_event_set(obj, GUI_EVENT_3);
-                }
-                break;
-            case TOUCH_DOWN_SLIDE:
-                {
-                    gui_obj_event_set(obj, GUI_EVENT_4);
-                }
-                break;
-            case TOUCH_LEFT_SLIDE:
-                {
-                    gui_obj_event_set(obj, GUI_EVENT_1);
-                }
-                break;
-            case TOUCH_RIGHT_SLIDE:
-                {
-                    gui_obj_event_set(obj, GUI_EVENT_2);
-                }
-                break;
-            case TOUCH_LONG:
-                {
-                    b->long_flag = true;
-                    gui_obj_event_set(obj, GUI_EVENT_TOUCH_LONG);
-                }
-                break;
 
-            default:
-                break;
-            }
-            if (tp->pressed)
+    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
+    {
+        gui_win_t *b = (void *)obj;
+        switch (tp->type)
+        {
+        case TOUCH_SHORT:
             {
-                gui_obj_event_set(obj, GUI_EVENT_TOUCH_PRESSED);
-                b->long_flag = false;
-                b->press_flag = true;
+                gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
             }
-            if (b->release_flag)
+            break;
+        case TOUCH_UP_SLIDE:
             {
-                b->press_flag = false;
-                b->release_flag = false;
-                gui_obj_event_set(obj, GUI_EVENT_TOUCH_RELEASED);
-                b->long_flag = false;
+                gui_obj_event_set(obj, GUI_EVENT_3);
             }
-            if (tp->released && b->press_flag)
+            break;
+        case TOUCH_DOWN_SLIDE:
             {
-                b->release_flag = true;
+                gui_obj_event_set(obj, GUI_EVENT_4);
             }
+            break;
+        case TOUCH_LEFT_SLIDE:
+            {
+                gui_obj_event_set(obj, GUI_EVENT_1);
+            }
+            break;
+        case TOUCH_RIGHT_SLIDE:
+            {
+                gui_obj_event_set(obj, GUI_EVENT_2);
+            }
+            break;
+        case TOUCH_LONG:
+            {
+                b->long_flag = true;
+                gui_obj_event_set(obj, GUI_EVENT_TOUCH_LONG);
+            }
+            break;
+
+        default:
+            break;
+        }
+        if (tp->pressed)
+        {
+            gui_obj_event_set(obj, GUI_EVENT_TOUCH_PRESSED);
+            b->long_flag = false;
+            b->press_flag = true;
+        }
+        if (b->release_flag)
+        {
+            b->press_flag = false;
+            b->release_flag = false;
+            gui_obj_event_set(obj, GUI_EVENT_TOUCH_RELEASED);
+            b->long_flag = false;
+        }
+        if (tp->released && b->press_flag)
+        {
+            b->release_flag = true;
         }
     }
     gui_win_t *ob = (void *)obj;

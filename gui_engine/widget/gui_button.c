@@ -105,40 +105,21 @@ static void button_prepare(gui_obj_t *obj)
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
 
-    if (((obj->ax + obj->tx) < (int)gui_get_screen_width()) && (((obj->ax + obj->tx) + obj->w) >= 0) &&
-        \
-        ((obj->ay + obj->ty) < (int)gui_get_screen_height()) && (((obj->ay + obj->ty) + obj->h) >= 0))
 
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == false)
     {
-        if (tp->type != 271)
-        {
-            //gui_log("type2:%d,%d\n", tp->type, tp->released);
-        }
+        return;
+    }
+    {
         gui_button_t *b = (void *)obj;
         switch (tp->type)
         {
         case TOUCH_SHORT:
             {
-                //gui_log("%s\n", "TOUCH_SHORT");
-                //
-//                bool callback = false;
-                for (uint32_t i = 0; i < obj->event_dsc_cnt; i++)
+                if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                 {
-                    if ((tp->x >= (obj->ax + obj->tx) && tp->x <= ((obj->ax + obj->tx) + obj->w)) &&
-                        (tp->y >= (obj->ay + obj->ty) && tp->y <= ((obj->ay + obj->ty) + obj->h)))
-                    {
-                        //callback = true;
-                    }
-                } ////gui_log("%d\n", __LINE__);
-                //if (callback)
-                {
-                    //gui_log("%d\n", __LINE__);
-                    if ((tp->x >= (obj->ax + obj->tx) && tp->x <= ((obj->ax + obj->tx) + obj->w)) &&
-                        (tp->y >= (obj->ay + obj->ty) && tp->y <= ((obj->ay + obj->ty) + obj->h)))
-                    {
-                        //gui_log("%d\n", __LINE__);
-                        gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
-                    }
+                    gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
                 }
             }
             break;
@@ -146,14 +127,12 @@ static void button_prepare(gui_obj_t *obj)
             {
                 if (b->long_flag == false)
                 {
+                    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                     {
-                        if ((tp->x >= (obj->ax + obj->tx) && tp->x <= ((obj->ax + obj->tx) + obj->w)) &&
-                            (tp->y >= (obj->ay + obj->ty) && tp->y <= ((obj->ay + obj->ty) + obj->h)))
-                        {
-                            b->long_flag = true;
-                            gui_obj_event_set(obj, GUI_EVENT_TOUCH_LONG);
-                        }
+                        b->long_flag = true;
+                        gui_obj_event_set(obj, GUI_EVENT_TOUCH_LONG);
                     }
+
                 }
             }
             break;
@@ -166,9 +145,7 @@ static void button_prepare(gui_obj_t *obj)
         {
             if (tp->pressed)
             {
-
-                if ((tp->x >= obj->ax + obj->tx && tp->x <= (obj->ax + obj->tx  + obj->w)) &&
-                    (tp->y >= obj->ay + obj->ty && tp->y <= (obj->ay + obj->ty + obj->h)))
+                if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                 {
 
                     if (b->on_pic_addr && b->style == 0)

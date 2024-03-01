@@ -314,38 +314,10 @@ static void switch_prepare(gui_obj_t *obj)
 {
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
-    // if(obj->parent->type == PAGELIST)
-    // {
-    //     gui_log("obj->y = %d, obj->ay = %d\n", obj->y, obj->ay);
-    // }
-    // gui_log("switch_prepare\n");
-    if (((obj->ax + obj->tx) < (int)gui_get_screen_width()) && (((obj->ax + obj->tx) + obj->w) >= 0) &&
-        \
-        ((obj->ay + obj->ty) < (int)gui_get_screen_height()) && (((obj->ay + obj->ty) + obj->h) >= 0))
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
     {
-
-        /*if (((tp->type == TOUCH_SHORT) &&
-             ((tp->x >= obj->ax && tp->x <= (obj->ax + obj->w)) && (tp->y >= obj->ay &&
-                                                                    tp->y <= (obj->ay + obj->h)))))
-        {
-            //gui_log("switch_prepare2\n");
-            gui_switch_t *sw = (gui_switch_t *)obj;
-            sw->ifon = !(sw->ifon);
-            gui_switch_change_switch(sw);//gui_log("switch_prepare3\n");
-            if (sw->ifon)
-            {
-                //gui_log("switch_prepare4\n");
-                gui_obj_event_set(obj, GUI_EVENT_1);
-            }
-            else if (!sw->ifon)
-            {
-                //gui_log("switch_prepare5\n");
-                gui_obj_event_set(obj, GUI_EVENT_2);
-            }
-
-        }*/
-        if ((tp->x >= (obj->ax + obj->tx) && tp->x <= ((obj->ax + obj->tx) + obj->w)) &&
-            (tp->y >= (obj->ay + obj->ty) && tp->y <= ((obj->ay + obj->ty) + obj->h)))
+        if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
         {
             gui_switch_t *b = (void *)obj;
             switch (tp->type)
@@ -402,8 +374,7 @@ static void switch_prepare(gui_obj_t *obj)
 
                         //if (b->long_click_cb)
                         {
-                            if ((tp->x >= (obj->ax + obj->tx) && tp->x <= ((obj->ax + obj->tx) + obj->w)) &&
-                                (tp->y >= (obj->ay + obj->ty) && tp->y <= ((obj->ay + obj->ty) + obj->h)))
+                            if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                             {
                                 b->long_flag = true;
                                 if (b->long_touch_enable)
@@ -440,8 +411,7 @@ static void switch_prepare(gui_obj_t *obj)
                 if (tp->pressed)
                 {
 
-                    if ((tp->x >= (obj->ax + obj->tx) && tp->x <= ((obj->ax + obj->tx) + obj->w)) &&
-                        (tp->y >= (obj->ay + obj->ty) && tp->y <= ((obj->ay + obj->ty) + obj->h)))
+                    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                     {
 
                         //gui_send_callback_p_to_server(b->press_cb, b->press_cb_p);
@@ -490,44 +460,24 @@ static void switch_prepare(gui_obj_t *obj)
                         else if (!b->long_touch_state && !b->long_flag
                                  || !b->long_touch_enable)
                         {
-                            if ((tp->x >= (obj->ax + obj->tx) && tp->x <= ((obj->ax + obj->tx) + obj->w)) &&
-                                (tp->y >= (obj->ay + obj->ty) && tp->y <= ((obj->ay + obj->ty) + obj->h)))
-                                if ((tp->x + tp->deltaX >= (obj->ax + obj->tx) &&
-                                     tp->x + tp->deltaX <= ((obj->ax + obj->tx) + obj->w)) &&
-                                    (tp->y + tp->deltaY >= (obj->ay + obj->ty) && tp->y + tp->deltaY <= ((obj->ay + obj->ty) + obj->h)))
+                            if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
+                            {
+                                gui_switch_t *sw = (gui_switch_t *)obj;
+                                sw->ifon = !(sw->ifon);
+                                gui_switch_change_switch(sw);//gui_log("switch_prepare3\n");
+                                if (sw->ifon)
                                 {
-                                    gui_switch_t *sw = (gui_switch_t *)obj;
-                                    sw->ifon = !(sw->ifon);
-                                    gui_switch_change_switch(sw);//gui_log("switch_prepare3\n");
-                                    if (sw->ifon)
-                                    {
-                                        //gui_log("switch_prepare4\n");
-                                        gui_obj_event_set(obj, GUI_EVENT_1);
-                                    }
-                                    else if (!sw->ifon)
-                                    {
-                                        //gui_log("switch_prepare5\n");
-                                        gui_obj_event_set(obj, GUI_EVENT_2);
-                                    }
-                                    gui_tree_disable_widget_gesture_by_type(&(gui_current_app()->screen), WINDOW);
+                                    //gui_log("switch_prepare4\n");
+                                    gui_obj_event_set(obj, GUI_EVENT_1);
                                 }
-                            //gui_send_callback_p_to_server(b->press_cb, b->press_cb_p);
-                            //gui_log("%d\n", __LINE__);
+                                else if (!sw->ifon)
+                                {
+                                    //gui_log("switch_prepare5\n");
+                                    gui_obj_event_set(obj, GUI_EVENT_2);
+                                }
+                                gui_tree_disable_widget_gesture_by_type(&(gui_current_app()->screen), WINDOW);
+                            }
 
-                            //if (callback)
-                            //{
-                            //gui_obj_event_set(obj, GUI_EVENT_TOUCH_RELEASED);
-                            //}  //gui_log("%d\n", __LINE__);
-
-                            //b->long_flag = false;
-                            ////gui_log("%s\n", "TOUCH_SHORT");
-                            //
-
-                            //if (callback)
-                            //{
-                            //gui_log("%d\n", __LINE__);
-
-                            //}
                         }
                     }
                     b->press_flag = false;

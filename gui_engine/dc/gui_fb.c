@@ -10,6 +10,7 @@
  */
 #include <string.h>
 #include <guidef.h>
+#include <gui_matrix.h>
 #include <gui_fb.h>
 #include <gui_obj.h>
 #include "gui_server.h"
@@ -17,20 +18,78 @@
 
 
 
-static void obj_is_active(gui_obj_t *obj)
+static bool obj_is_active(gui_obj_t *obj)
 {
 
-    int sx = obj->dx + obj->ax + obj->tx;
-    int sy = obj->dy + obj->ay + obj->ty;
-    int ex = sx + obj->w;
-    int ey = sy + obj->h;
+    gui_point_t p[4] =
+    {
+        {0, 0, 1},
+        {obj->w, 0, 1},
+        {0, obj->h, 1},
+        {obj->w, obj->h, 1}
+    };
+
+    float x_min = 0.0f;
+    float x_max = 0.0f;
+    float y_min = 0.0f;
+    float y_max = 0.0f;
 
 
-    if ((sx < (int)gui_get_screen_width()) && ((ex > 0) || sx == 0) && \
-        (sy < (int)gui_get_screen_height()) && ((ey > 0) || sy == 0))
+    pox_mul(obj->matrix, p);
+    x_min = p->p[0];
+    x_max = p->p[0];
+    y_min = p->p[1];
+    y_max = p->p[1];
+    pox_mul(obj->matrix, p + 1);
+    pox_mul(obj->matrix, p + 2);
+    pox_mul(obj->matrix, p + 3);
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[0] < x_min)
+        {
+            x_min = point->p[0];
+        }
+    }
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[0] > x_max)
+        {
+            x_max = point->p[0];
+        }
+    }
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[1] < y_min)
+        {
+            y_min = point->p[1];
+        }
+    }
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[1] > y_max)
+        {
+            y_max = point->p[1];
+        }
+    }
+
+    if ((x_min < (int)gui_get_screen_width()) && (x_max > 0) && \
+        (y_min < (int)gui_get_screen_height()) && (y_max > 0))
     {
         obj->active = true;
+        obj->focused = true;
+        return true;
     }
+    obj->focused = false;
+
+    return false;
 }
 
 
@@ -43,6 +102,7 @@ static void obj_draw_prepare(gui_obj_t *object)
     {
         GUI_ASSERT(node != NULL);
         gui_obj_t *obj = gui_list_entry(node, gui_obj_t, brother_list);
+
         if (!(obj->create_done))
         {
             continue;
@@ -51,15 +111,14 @@ static void obj_draw_prepare(gui_obj_t *object)
         {
             continue;
         }
-        obj->dx += obj->parent->dx;
-        obj->dy += obj->parent->dy;
-        obj->ax = obj->x + obj->parent->ax;
-        obj->ay = obj->y + obj->parent->ay;
-        obj->sx *= obj->parent->sx;
-        obj->sy *= obj->parent->sy;
-        obj->tx += obj->parent->tx;
-        obj->ty += obj->parent->ty;
+
         obj->opacity_value = obj->parent->opacity_value;
+
+        if ((obj->matrix != NULL) && (obj->parent->matrix))
+        {
+            memcpy(obj->matrix, obj->parent->matrix, sizeof(gui_matrix_t));
+            matrix_translate(obj->x, obj->y, obj->matrix);
+        }
 
         if (obj->obj_prepare != NULL)
         {
@@ -69,8 +128,10 @@ static void obj_draw_prepare(gui_obj_t *object)
         {
             continue;
         }
-        obj->active = false;
-        obj_is_active(obj);
+        if (obj_is_active(obj) == false)
+        {
+            continue;
+        }
         obj_draw_prepare(obj);
     }
 }
@@ -128,14 +189,8 @@ static void obj_draw_end(gui_obj_t *obj)
                 }
             }
         }
-        obj->dx = 0;
-        obj->dy = 0;
-        obj->ax = 0;
-        obj->ay = 0;
-        obj->tx = 0;
-        obj->ty = 0;
-        obj->sx = 1.0f;
-        obj->sy = 1.0f;
+
+        matrix_identity(obj->matrix);
         obj->active = false;
         obj_draw_end(obj);
     }
@@ -246,16 +301,13 @@ void gui_fb_disp(gui_obj_t *root)
         GUI_ASSERT(NULL != NULL);
         return;
     }
-    int time = gui_ms_get();
+
     obj_draw_prepare(root);
-    int prepare_cost = gui_ms_get() - time;
+
     static int last_ms;
     if (fb_change == true)
     {
-        time = gui_ms_get();
         gui_fb_draw(root);
-        int draw_cost = gui_ms_get() - time;
-        gui_log("cost prepare:%dms, draw:%dms\n", prepare_cost, draw_cost);
         fb_change = false;
         {
 

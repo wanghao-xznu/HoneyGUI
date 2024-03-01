@@ -48,19 +48,7 @@ extern "C" {
   */
 
 /** @brief  ... */
-typedef struct VertexRec
-{
-    float x;                    //!< x axis
-    float y;                    //!< y axis
-    float z;                    //!< z axis
-} Vertex_t;
 
-typedef struct NormalRec
-{
-    float x;                    //!< x axis
-    float y;                    //!< y axis
-    float z;                    //!< z axis
-} Normal_t;
 
 #ifdef  __CC_ARM
 #pragma anon_unions

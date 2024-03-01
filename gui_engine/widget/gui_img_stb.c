@@ -299,8 +299,9 @@ static void stb_image_draw_cb(gui_obj_t *obj)
     draw_img_t *draw_img = &img->base.draw_img;
 
     gui_rect_t draw_rect = {0};
-    draw_rect.x1 = obj->ax + obj->dx + obj->tx;
-    draw_rect.y1 = obj->ay + obj->dy + obj->ty;
+
+    draw_rect.x1 = draw_img->img_x;
+    draw_rect.y1 = draw_img->img_y;
     draw_rect.x2 = draw_rect.x1 + obj->w;
     draw_rect.y2 = draw_rect.y1 + obj->h;
     if (((struct gui_rgb_data_head *)(img->base.draw_img.data))->type == GIF)

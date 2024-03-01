@@ -251,13 +251,8 @@ static void svg_draw_cb(gui_obj_t *obj)
     nvgBeginFrame(vg, dc->fb_width, dc->fb_height, 1);
 
     nvgResetTransform(vg);
-    nvgTranslate(vg, GET_BASE(this)->dx, GET_BASE(this)->dy);
-    nvgTranslate(vg, GET_BASE(this)->tx, GET_BASE(this)->ty);
-    nvgTranslate(vg, GET_BASE(this)->ax, GET_BASE(this)->ay);
-
-    nvgTranslate(vg, dc->screen_width / 2, dc->screen_height / 2);
-    nvgScale(vg, this->base.sx, this->base.sy);
-    nvgTranslate(vg, -dc->screen_width / 2, -dc->screen_height / 2);
+    nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                 obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
     nvgTranslate(vg, this->t_x, this->t_y);
 

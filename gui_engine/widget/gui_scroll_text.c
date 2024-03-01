@@ -102,10 +102,6 @@ static void gui_font_draw(gui_text_t *text, gui_rect_t *rect)
     switch (text->font_type)
     {
     case GUI_FONT_SOURCE_BMP:
-        if (text->base.sx != 1.0f || text->base.sy != 1.0f)
-        {
-            return;
-        }
         gui_font_mem_draw(text, rect);
         break;
     case GUI_FONT_SOURCE_TTF:
@@ -209,30 +205,34 @@ static void scrolltext_draw(gui_obj_t *obj)
     if (text->base.mode == SCROLL_X && offset > obj->w)
     {
 
-        draw_rect.x1 = obj->ax + obj->dx + obj->tx - text->cnt_value + text->start_value;
+        draw_rect.x1 = 0 - text->cnt_value + text->start_value;
         draw_rect.x2 = draw_rect.x1 + text->base.text_offset;
-        draw_rect.y1 = obj->ay + obj->dy + obj->ty;
+        draw_rect.y1 = 0;
         draw_rect.y2 = draw_rect.y1 + obj->h;
     }
     else if (text->base.mode == SCROLL_Y && (offset > obj->h || offset == 0))
     {
-        draw_rect.x1 = obj->ax + obj->dx + obj->tx;
+        draw_rect.x1 = 0;
         draw_rect.x2 = draw_rect.x1 + obj->w;
-        draw_rect.y1 = obj->ay + obj->dy + obj->ty - text->cnt_value + text->start_value;
+        draw_rect.y1 = 0 - text->cnt_value + text->start_value;
         draw_rect.y2 = draw_rect.y1 + text->base.text_offset;
     }
     else
     {
-        draw_rect.x1 = obj->ax + obj->dx + obj->tx;
-        draw_rect.y1 = obj->ay + obj->dy + obj->ty;
+        draw_rect.x1 = 0;
+        draw_rect.y1 = 0;
         draw_rect.x2 = draw_rect.x1 + obj->w;
         draw_rect.y2 = draw_rect.y1 + obj->h;
     }
 
-    draw_rect.xboundleft = obj->ax + obj->dx + obj->tx;
-    draw_rect.xboundright = obj->ax + obj->dx + obj->tx + obj->w;
-    draw_rect.yboundtop = obj->ay + obj->dy + obj->ty;
-    draw_rect.yboundbottom = obj->ay + obj->dy + obj->ty + obj->h;
+    draw_rect.xboundleft = 0;
+    draw_rect.xboundright = 0 + obj->w;
+    draw_rect.yboundtop = 0;
+    draw_rect.yboundbottom = 0 + obj->h;
+    if (dc->section_count == 0)
+    {
+        gui_font_load(&text->base, &draw_rect);
+    }
     if (dc->section_count == 0)
     {
         gui_font_load(&text->base, &draw_rect);

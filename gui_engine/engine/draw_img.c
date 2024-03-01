@@ -81,7 +81,7 @@ bool gui_image_new_area(draw_img_t *img)
     memcpy(img->inverse, img->matrix, sizeof(struct gui_matrix));
     matrix_inverse(img->inverse);
 
-    struct gui_pox pox = {0.0f};
+    struct gui_point pox = {0.0f};
     float x_min = 0.0f;
     float x_max = 0.0f;
     float y_min = 0.0f;

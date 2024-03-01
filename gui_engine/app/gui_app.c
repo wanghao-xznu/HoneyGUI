@@ -68,8 +68,6 @@ void gui_app_startup(gui_app_t *app)
 {
     gui_list_init(&app->screen.child_list);
     gui_list_init(&app->screen.brother_list);
-    app->screen.sx = 1.0f;
-    app->screen.sy = 1.0f;
     app->screen.opacity_value = UINT8_MAX;
     app->ui_design(app);
     if (app->active_ms == 0)

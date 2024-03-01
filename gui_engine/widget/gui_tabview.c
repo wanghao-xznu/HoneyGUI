@@ -23,6 +23,7 @@
 #include <gui_obj.h>
 #include <tp_algo.h>
 #include <gui_tabview.h>
+#include <gui_matrix.h>
 
 
 /** @defgroup WIDGET WIDGET
@@ -100,31 +101,12 @@ static void tabview_prepare(gui_obj_t *obj)
         tabview->jump.jump_flag = false;
         return;
     }
-    bool cover;
-    cover = false;
-    bool cover1 = false;
-    gui_tree_get_cover(obj, CURTAINVIEW, &cover1);
 
-    bool cover2 = false;
-    gui_tree_get_cover(obj, ICONLIST, &cover2);
-
-    cover = cover1 || cover2;
-    bool cover3 = false;
-    gui_tree_get_cover(obj, SEEKBAR, &cover3);
-    cover = cover3 || cover;
-
-    if (cover && tabview->cur_id.x == 0)
+    if (obj->focused == false)
     {
         return;
     }
-    if (cover && tabview->cur_id.y == 0)
-    {
-        return;
-    }
-    if (cover)
-    {
-        return;
-    }
+
     if (tabview->tp_disable)
     {
         return;
@@ -148,9 +130,7 @@ static void tabview_prepare(gui_obj_t *obj)
     case TOUCH_HOLD_X:
         if (tabview->loop)
         {
-
-            obj->dx = tp->deltaX;
-            this->release_x = obj->dx;
+            this->release_x = tp->deltaX;
 
             {
                 //left edge
@@ -211,10 +191,6 @@ static void tabview_prepare(gui_obj_t *obj)
                     }
                 }
             }
-
-
-
-
         }
         else
         {
@@ -222,21 +198,19 @@ static void tabview_prepare(gui_obj_t *obj)
             {
                 break;
             }
-            obj->dx = tp->deltaX;
-            this->release_x = obj->dx;
+
+            this->release_x = tp->deltaX;
             if (tabview->cur_id.x == 0 && tabview->tab_cnt_right == 0)
             {
-                if (obj->dx < 0)
+                if (this->release_x < 0)
                 {
-                    obj->dx = 0;
                     break;
                 }
             }
             if (tabview->cur_id.x == 0 && tabview->tab_cnt_left == 0)
             {
-                if (obj->dx > 0)
+                if (this->release_x > 0)
                 {
-                    obj->dx = 0;
                     this->release_x = 0;
                     break;
                 }
@@ -251,28 +225,24 @@ static void tabview_prepare(gui_obj_t *obj)
             break;
         }
         gui_obj_event_set(obj, GUI_EVENT_8);
-        obj->dy = tp->deltaY;
-        this->release_y = obj->dy;
+        this->release_y = tp->deltaY;
         if (tabview->cur_id.y == 0 && tabview->tab_cnt_down == 0)
         {
-            if (obj->dy < 0)
+            if (this->release_y < 0)
             {
-                obj->dy = 0;
                 break;
             }
         }
         if (tabview->cur_id.y == 0 && tabview->tab_cnt_up == 0)
         {
-            if (obj->dy > 0)
+            if (this->release_y > 0)
             {
-                obj->dy = 0;
                 this->release_y = 0;
                 break;
             }
         }
         break;
     case TOUCH_LEFT_SLIDE:
-        gui_log("TOUCH_LEFT_SLIDE, obj->dx = %d\n", obj->dx);
         if (tabview->tab_cnt_right == 0 && tabview->cur_id.x == 0)
         {
             break;
@@ -408,10 +378,7 @@ static void tabview_prepare(gui_obj_t *obj)
     {
         this->release_x = 0;
     }
-    if (!(tabview->tab_cnt_left == 0 && tabview->tab_cnt_right == 0))
-    {
-        obj->dx = this->release_x;
-    }
+
     if (this->release_y >= GUI_FRAME_STEP)
     {
         this->release_y -= GUI_FRAME_STEP;
@@ -424,7 +391,6 @@ static void tabview_prepare(gui_obj_t *obj)
     {
         this->release_y = 0;
     }
-    obj->dy = this->release_y;
 
     uint8_t last = this->checksum;
     this->checksum = 0;

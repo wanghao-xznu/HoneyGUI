@@ -90,6 +90,7 @@ static void pagelist_prepare(gui_pagelist_t *this)
     touch_info_t *tp = tp_get_info();
     gui_obj_t *root = (gui_obj_t *)this;
     gui_dispdev_t *dc = gui_get_dc();
+    gui_obj_t *obj = (gui_obj_t *)this;
     //set pagelist h according to list_gap_y real_list_max
     if (!this->h_set_done)
     {
@@ -101,18 +102,13 @@ static void pagelist_prepare(gui_pagelist_t *this)
         this->h_set_done = true;
         gui_log("root->h = %d\n", root->h);
     }
-    if (root->parent->ay != 0)
+    if (0/*todo*/ != 0)
     {
         return;
     }
-    // int16_t list_h = 0;
-    // if (this->list_last != NULL)
-    // {
-    //     list_h = this->list_last->base.h;
-    // }
-    //gui_log("root ax = %d, root ay = %d\n", root->ax, root->ay);
-    if ((root->ax < (int)gui_get_screen_width()) && ((root->ax + root->w) >= 0) && \
-        (root->ay < (int)gui_get_screen_height()) && ((root->ay + root->h) >= 0))
+
+
+    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
     {
         // valid touch range xy
         if (tp->x > this->x_init && tp->x < (this->x_init + root->w))
@@ -156,7 +152,7 @@ static void pagelist_prepare(gui_pagelist_t *this)
                 if (this->list_first != NULL)
                 {
                     gui_obj_t *list_next = NULL;
-                    int16_t ay_list_first = this->base.ay + this->list_first->base.y;
+                    int16_t ay_list_first = 0/*todo*/ + this->list_first->base.y;
                     this->list_first->touch_disable = false;
                     if (ay_list_first + this->list_first->base.h < this->show_border_top)
                     {
@@ -200,7 +196,7 @@ static void pagelist_prepare(gui_pagelist_t *this)
                 if (this->list_last != NULL)
                 {
                     gui_obj_t *list_prev = NULL;
-                    int16_t ay_list_last = this->base.ay + this->list_last->base.y;
+                    int16_t ay_list_last = 0/*todo*/ + this->list_last->base.y;
                     this->list_last->touch_disable = false;
                     if (ay_list_last > this->show_border_bottom)
                     {

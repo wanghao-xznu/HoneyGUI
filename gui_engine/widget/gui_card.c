@@ -142,35 +142,19 @@ static void tab_prepare(gui_obj_t *obj)
 
     float scale_0 = 1.0f;
     float scale_1 = 0.9f;
-    //float scale_2 = 0.82f;
 
     if (location < location_0)
     {
-        obj->tx = 0;
-        obj->ty = this->base.h * this->id + card_dy;
-        obj->sx = scale_0;
-        obj->sy = scale_0;
-        obj->dx = 0;
-        obj->dy = 0;
+        //todo
     }
     else if (location < location_1)
     {
         float scale = (scale_0 - scale_1) * (location - location_0) / (location_1 - location_0);
-        obj->tx = 0;
-        obj->ty = location;
-        obj->sx = 1.0f - scale;
-        obj->sy = 1.0f - scale;
-        obj->dx = 0;
-        obj->dy = 0;
+        //todo
     }
     else
     {
-        obj->tx = 0;
-        obj->ty = location_1;
-        obj->sx = scale_1;
-        obj->sy = scale_1;
-        obj->dx = 0;
-        obj->dy = 0;
+        //todo
     }
 
 
@@ -206,7 +190,6 @@ static void gui_card_ctor(gui_card_t *this, gui_obj_t *parent, const char *filen
             parent_ext->tab_cnt_down++;
         }
     }
-
 
     this->id = idy;
 

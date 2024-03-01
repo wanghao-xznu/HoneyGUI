@@ -41,10 +41,6 @@ typedef enum
     GUI_EVENT_6,
     GUI_EVENT_7,
     GUI_EVENT_8,
-
-    GUI_EVENT_DISPLAY_ON,
-    GUI_EVENT_CALL,
-    GUI_EVENT_PLAYER,
 } gui_event_t;
 
 

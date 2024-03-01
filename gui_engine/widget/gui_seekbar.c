@@ -88,33 +88,31 @@ static void seekbar_preapre(gui_obj_t *obj)
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
     gui_seekbar_t *circle = (gui_seekbar_t *)obj;//gui_log("obj:%s,%p\n",obj->name, circle->animate);
-    //gui_seekbar_t *b =  circle;
-    //circle->slider.slider_circle->set((gui_circle_t *)circle, circle->base.get_progress(&(circle->base))+obj->x, (int16_t)(circle->slider.slider_circle->circle.center.y));
-    if ((obj->ax < (int)gui_get_screen_width()) && ((obj->ax + obj->w) >= 0) && \
-        (obj->ay < (int)gui_get_screen_height()) && ((obj->ay + obj->h) >= 0))
+
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
     {
 
         if (tp->type == TOUCH_HOLD_Y)
         {
-            if ((tp->x >= obj->ax && tp->x <= (obj->ax + obj->w)) && (tp->y >= obj->ay &&
-                                                                      tp->y <= (obj->ay + obj->h)))
+            if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
             {
-                int pro = tp->y + tp->deltaY - obj->ay;
+                int pro = tp->y + tp->deltaY;//todo
                 if (pro <= 0) { pro = 1; }
                 if (pro >= obj->h) { pro = obj->h; }
                 if (GET_BASE(circle->base.c)->type == IMAGE_FROM_MEM)
                 {
                     pro = pro * (circle->base.max - 2) / obj->h; //gui_log("pro:%d\n",pro);
                 }
-                //gui_log("pro:%d,type:%d\n",pro, GET_BASE(circle->base.c)->type);
+
                 gui_progressbar_set_progress((void *)circle, (circle->base.max - 2) - pro);
             }
         }
 
 
     }
-    if ((obj->ax < (int)gui_get_screen_width()) && ((obj->ax + obj->w) >= 0) && \
-        (obj->ay < (int)gui_get_screen_height()) && ((obj->ay + obj->h) >= 0))
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
     {
         if (tp->type != 271)
         {
@@ -139,9 +137,7 @@ static void seekbar_preapre(gui_obj_t *obj)
                 } ////gui_log("%d\n", __LINE__);
                 //if (callback)
                 {
-                    ////gui_log("%d\n", __LINE__);
-                    if ((tp->x >= obj->ax && tp->x <= (obj->ax + obj->w)) &&
-                        (tp->y >= obj->ay && tp->y <= (obj->ay + obj->h)))
+                    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                     {
                         ////gui_log("%d\n", __LINE__);
                         gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
@@ -163,15 +159,9 @@ static void seekbar_preapre(gui_obj_t *obj)
         {
             if (tp->pressed)
             {
-
-
-                if ((tp->x >= obj->ax + obj->tx && tp->x <= (obj->ax + obj->tx + obj->w)) &&
-                    (tp->y >= obj->ay + obj->ty && tp->y <= (obj->ay + obj->ty + obj->h)))
+                if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                 {
                     b->press_flag = true;
-                    //gui_send_callback_p_to_server(b->press_cb, b->press_cb_p);
-
-                    ////gui_log("%d\n", __LINE__);
                     gui_obj_event_set(obj, GUI_EVENT_1);  ////gui_log("%d\n", __LINE__);
                     obj->cover = true;
                 }
@@ -245,23 +235,19 @@ static void seekbar_preapre_arc(gui_obj_t *obj)
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
     gui_seekbar_t *circle = (gui_seekbar_t *)obj;
-    //gui_seekbar_t *b =  circle;
-    //circle->slider.slider_circle->set((gui_circle_t *)circle, circle->base.get_progress(&(circle->base))+obj->x, (int16_t)(circle->slider.slider_circle->circle.center.y));
-    if ((obj->ax < (int)gui_get_screen_width()) && ((obj->ax + obj->w) >= 0) && \
-        (obj->ay < (int)gui_get_screen_height()) && ((obj->ay + obj->h) >= 0))
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
     {
 
         if (tp->type == TOUCH_HOLD_X || tp->type == TOUCH_HOLD_Y || tp->pressed)
         {
-            if ((tp->x >= obj->ax + obj->tx && tp->x <= (obj->ax + obj->tx + obj->w)) &&
-                (tp->y >= obj->ay + obj->ty &&
-                 tp->y <= (obj->ay + obj->ty + obj->h)))
+            if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
             {
-                if (judge_point_in_ring(circle->arcx + obj->ax, circle->arcy + obj->ay, circle->arc_r,
+                if (judge_point_in_ring(circle->arcx + 0, circle->arcy + 0, circle->arc_r,
                                         circle->arc_w + circle->arc_r, tp->x + tp->deltaX, tp->y + tp->deltaY))
                 {
                     //gui_log("1");
-                    float pro = get_gegree_to_center(circle->arcx + obj->ax, circle->arcy + obj->ay, tp->x + tp->deltaX,
+                    float pro = get_gegree_to_center(circle->arcx + 0, circle->arcy + 0, tp->x + tp->deltaX,
                                                      tp->y + tp->deltaY);
                     float progress = 0;
                     GUI_UNUSED(progress);
@@ -304,8 +290,8 @@ static void seekbar_preapre_arc(gui_obj_t *obj)
 
 
     }
-    if ((obj->ax < (int)gui_get_screen_width()) && ((obj->ax + obj->w) >= 0) && \
-        (obj->ay < (int)gui_get_screen_height()) && ((obj->ay + obj->h) >= 0))
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
     {
         if (tp->type != 271)
         {
@@ -327,12 +313,10 @@ static void seekbar_preapre_arc(gui_obj_t *obj)
                     {
                         callback = true;
                     }
-                } ////gui_log("%d\n", __LINE__);
-                //if (callback)
+                }
+
                 {
-                    ////gui_log("%d\n", __LINE__);
-                    if ((tp->x >= obj->ax && tp->x <= (obj->ax + obj->w)) &&
-                        (tp->y >= obj->ay && tp->y <= (obj->ay + obj->h)))
+                    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                     {
                         ////gui_log("%d\n", __LINE__);
                         gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
@@ -354,15 +338,10 @@ static void seekbar_preapre_arc(gui_obj_t *obj)
         {
             if (tp->pressed)
             {
-
-
-                if ((tp->x >= obj->ax + obj->tx && tp->x <= (obj->ax + obj->tx + obj->w)) &&
-                    (tp->y >= obj->ay + obj->ty && tp->y <= (obj->ay + obj->ty + obj->h)))
+                if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                 {
                     b->press_flag = true;
-                    //gui_send_callback_p_to_server(b->press_cb, b->press_cb_p);
 
-                    ////gui_log("%d\n", __LINE__);
                     gui_obj_event_set(obj, GUI_EVENT_1);  ////gui_log("%d\n", __LINE__);
                     obj->cover = true;
                 }
@@ -370,17 +349,9 @@ static void seekbar_preapre_arc(gui_obj_t *obj)
 
             if (tp->released && b->press_flag)
             {
-
-                {
-
-
-                    {
-                        b->press_flag = false;
-                        gui_obj_event_set(obj, GUI_EVENT_2);
-                        obj->cover = false;
-                    }  ////gui_log("%d\n", __LINE__);
-
-                }
+                b->press_flag = false;
+                gui_obj_event_set(obj, GUI_EVENT_2);
+                obj->cover = false;
             }
             if (b->press_flag)
             {
@@ -399,18 +370,15 @@ static void seekbar_h_preapre(gui_obj_t *obj)
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
     gui_seekbar_t *circle = (gui_seekbar_t *)obj;
-    //gui_seekbar_t *b =  circle;
-    //circle->slider.slider_circle->set((gui_circle_t *)circle, circle->base.get_progress(&(circle->base))+obj->x, (int16_t)(circle->slider.slider_circle->circle.center.y));
-    if ((obj->ax < (int)gui_get_screen_width()) && ((obj->ax + obj->w) >= 0) && \
-        (obj->ay < (int)gui_get_screen_height()) && ((obj->ay + obj->h) >= 0))
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
     {
 
         if (tp->type == TOUCH_HOLD_X || tp->type == TOUCH_HOLD_Y || tp->pressed)
         {
-            if ((tp->x >= obj->ax && tp->x <= (obj->ax + obj->w)) && (tp->y >= obj->ay &&
-                                                                      tp->y <= (obj->ay + obj->h)))
+            if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
             {
-                int pro = tp->x + tp->deltaX - obj->ax;
+                int pro = tp->x + tp->deltaX - 0;
                 if (pro <= 0) { pro = 1; }
                 if (pro >= obj->w) { pro = obj->w; }
                 if (GET_BASE(circle->base.c)->type == IMAGE_FROM_MEM)
@@ -422,8 +390,8 @@ static void seekbar_h_preapre(gui_obj_t *obj)
             }
         }
     }
-    if ((obj->ax < (int)gui_get_screen_width()) && ((obj->ax + obj->w) >= 0) && \
-        (obj->ay < (int)gui_get_screen_height()) && ((obj->ay + obj->h) >= 0))
+
+    if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
     {
         if (tp->type != 271)
         {
@@ -446,15 +414,11 @@ static void seekbar_h_preapre(gui_obj_t *obj)
                         callback = true;
                     }
                 } ////gui_log("%d\n", __LINE__);
-                //if (callback)
+
+                if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                 {
                     ////gui_log("%d\n", __LINE__);
-                    if ((tp->x >= obj->ax && tp->x <= (obj->ax + obj->w)) &&
-                        (tp->y >= obj->ay && tp->y <= (obj->ay + obj->h)))
-                    {
-                        ////gui_log("%d\n", __LINE__);
-                        gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
-                    }
+                    gui_obj_event_set(obj, GUI_EVENT_TOUCH_CLICKED);
                 }
             }
             break;
@@ -472,15 +436,9 @@ static void seekbar_h_preapre(gui_obj_t *obj)
         {
             if (tp->pressed)
             {
-
-
-                if ((tp->x >= obj->ax + obj->tx && tp->x <= (obj->ax + obj->tx + obj->w)) &&
-                    (tp->y >= obj->ay + obj->ty && tp->y <= (obj->ay + obj->ty + obj->h)))
+                if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                 {
                     b->press_flag = true;
-                    //gui_send_callback_p_to_server(b->press_cb, b->press_cb_p);
-
-                    ////gui_log("%d\n", __LINE__);
                     gui_obj_event_set(obj, GUI_EVENT_1);  ////gui_log("%d\n", __LINE__);
                     obj->cover = true;
                 }
@@ -488,17 +446,9 @@ static void seekbar_h_preapre(gui_obj_t *obj)
 
             if (tp->released && b->press_flag)
             {
-
-                {
-
-
-                    {
-                        b->press_flag = false;
-                        gui_obj_event_set(obj, GUI_EVENT_2);
-                        obj->cover = false;
-                    }  ////gui_log("%d\n", __LINE__);
-
-                }
+                b->press_flag = false;
+                gui_obj_event_set(obj, GUI_EVENT_2);
+                obj->cover = false;
             }
             if (b->press_flag)
             {

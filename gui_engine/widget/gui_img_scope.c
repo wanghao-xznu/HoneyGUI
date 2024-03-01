@@ -98,17 +98,12 @@ static void img_prepare(gui_obj_t *obj)
         gui_dispdev_t *dc = gui_get_dc();
         touch_info_t *tp = tp_get_info();
 
-        if (((obj->ax + obj->tx) < (int)gui_get_screen_width()) && (((obj->ax + obj->tx) + obj->w) >= 0) &&
-            \
-            ((obj->ay + obj->ty) < (int)gui_get_screen_height()) && (((obj->ay + obj->ty) + obj->h) >= 0))
-
+        if (gui_obj_in_rect(obj, 0, 0, gui_get_screen_width(), gui_get_screen_height()) == true)
         {
             gui_img_t *b = (void *)obj;
             if (tp->pressed)
             {
-
-                if ((tp->x >= obj->ax + obj->tx && tp->x <= (obj->ax + obj->tx  + obj->w)) &&
-                    (tp->y >= obj->ay + obj->ty && tp->y <= (obj->ay + obj->ty + obj->h)))
+                if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
                 {
                     gui_obj_event_set(obj, GUI_EVENT_TOUCH_PRESSED);
                     b->press_flag = true;
@@ -136,33 +131,17 @@ static void img_prepare(gui_obj_t *obj)
     gui_image_load_scale(draw_img);
     root->w = draw_img->img_w;
     root->h = draw_img->img_h;
-    matrix_identity(draw_img->matrix);
-    matrix_identity(draw_img->matrix);
-    matrix_translate(root->dx, root->dy, draw_img->matrix);
-    matrix_translate(root->tx, root->ty, draw_img->matrix);
+    matrix_translate(this->t_x, this->t_y, obj->matrix);
+    matrix_rotate(this->degrees, obj->matrix);
+    matrix_scale(this->scale_x, this->scale_y, obj->matrix);
+    matrix_translate(-this->c_x, -this->c_y, obj->matrix);
 
-
-    matrix_translate(dc->screen_width / 2, dc->screen_height / 2, draw_img->matrix);
-    matrix_scale(root->sx, root->sy, draw_img->matrix);
-    matrix_translate(-dc->screen_width / 2, -dc->screen_height / 2, draw_img->matrix);
-    matrix_translate(root->ax, root->ay, draw_img->matrix);
-
-    matrix_translate(this->t_x, this->t_y, draw_img->matrix);
-    matrix_rotate(this->degrees, draw_img->matrix);
-    matrix_scale(this->scale_x, this->scale_y, draw_img->matrix);
-
-    matrix_translate(-this->c_x, -this->c_y, draw_img->matrix);
-
-    memcpy(draw_img->inverse, draw_img->matrix, sizeof(struct gui_matrix));
+    memcpy(draw_img->matrix, obj->matrix, sizeof(struct gui_matrix));
+    memcpy(draw_img->inverse, obj->matrix, sizeof(struct gui_matrix));
     matrix_inverse(draw_img->inverse);
     gui_image_new_area(draw_img);
 
-    int sx = obj->dx + obj->ax + obj->tx;
-    int sy = obj->dy + obj->ay + obj->ty;
-    int ex = sx + obj->w;
-    int ey = sy + obj->h;
-
-    if ((tp->x >= sx && tp->x <= ex) && (tp->y >= sy && tp->y <= ey))
+    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
     {
         if ((tp->type == TOUCH_SHORT) && (obj->event_dsc_cnt > 0))
         {
@@ -189,8 +168,8 @@ static void img_scope_draw_cb(gui_obj_t *obj)
     draw_img_t *draw_img = &img->draw_img;
 
     gui_rect_t draw_rect = {0};
-    draw_rect.x1 = obj->ax;
-    draw_rect.y1 = obj->ay;
+    draw_rect.x1 = draw_img->img_x;
+    draw_rect.y1 = draw_img->img_y;
     draw_rect.x2 = draw_rect.x1 + obj->w;
     draw_rect.y2 = draw_rect.y1 + obj->h;
     draw_rect.xboundleft = GUI_TYPE(gui_img_scope_t, obj)->scope_x1;

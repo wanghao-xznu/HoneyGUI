@@ -149,7 +149,8 @@ static void eq_draw_cb(gui_obj_t *obj)
     nvgBeginFrame(vg, dc->fb_width, dc->fb_height, 1);
 
     nvgResetTransform(vg);
-    nvgTranslate(vg, (float)obj->dx, (float)obj->dy);
+    nvgTransform(vg, obj->matrix->m[0][0], obj->matrix->m[1][0], obj->matrix->m[0][1],
+                 obj->matrix->m[1][1], obj->matrix->m[0][2], obj->matrix->m[1][2]);
 
     time = time + 0.01f;
     drawGraph(vg, x, y, w, h, time);

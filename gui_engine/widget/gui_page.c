@@ -83,26 +83,7 @@
 /** @defgroup WIDGET_Exported_Functions WIDGET Exported Functions
   * @{
   */
-// static void deal_img_in_root(gui_obj_t *object, int ayend, int *out)
-// {
-//     gui_list_t *node = NULL;
-//     gui_list_for_each(node, &object->child_list)
-//     {
-//         gui_obj_t *obj = gui_list_entry(node, gui_obj_t, brother_list);
-//         if (!obj->not_show)
-//         {
-//             obj->ax = obj->x + obj->parent->ax;
-//             obj->ay = obj->y + obj->parent->ay;
-//             if (ayend < obj->ay + obj->h) { ayend = obj->ay + obj->h; }
-//             if (*out < ayend)
-//             {
-//                 *out = ayend;
-//             }
-//         }
-//         deal_img_in_root(obj, ayend, out);
-//     }
-// }
-static void page_height(gui_obj_t *object, gui_obj_t *page)
+static void deal_img_in_root(gui_obj_t *object, int ayend, int *out)
 {
     gui_list_t *node = NULL;
     gui_list_for_each(node, &object->child_list)
@@ -110,18 +91,24 @@ static void page_height(gui_obj_t *object, gui_obj_t *page)
         gui_obj_t *obj = gui_list_entry(node, gui_obj_t, brother_list);
         if (!obj->not_show)
         {
+            /*
+            obj->ax = obj->x + obj->parent->ax;
             obj->ay = obj->y + obj->parent->ay;
-            int buttom = obj->ay + obj->h - page->ay;
-            //gui_log("buttom:%d\n",buttom);
-            if (page->h < buttom)
+            if (ayend < obj->ay + obj->h)
             {
-                page->h = buttom;
+                ayend = obj->ay + obj->h;
             }
-
+            todo
+            */
+            if (*out < ayend)
+            {
+                *out = ayend;
+            }
         }
-        page_height(obj, page);
+        deal_img_in_root(obj, ayend, out);
     }
 }
+
 static void gui_page_add_scroll_bar(gui_page_t *this, void *bar_pic)
 {
     this->src_mode = IMG_SRC_MEMADDR;
@@ -233,19 +220,13 @@ void page_update(gui_obj_t *obj)
     obj_update_att(obj);
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
-    // int ay = 0;
-    // deal_img_in_root(obj, obj->y + obj->h, &ay);
-    // obj->h = ay - obj->y;
-    obj->h = gui_get_screen_height();
-    page_height(obj, obj);
-    //gui_log("objh:%d\n",obj->h);
-    if (obj->parent->ay != 0)
-    {
-        return;
-    }
+    int ay = 0;
+    deal_img_in_root(obj, obj->y + obj->h, &ay);
+    obj->h = ay - obj->y;
 
-    if ((obj->ax + obj->tx < (int)gui_get_screen_width()) && ((obj->ax + obj->tx + obj->w) >= 0) && \
-        (obj->ay + obj->ty < (int)gui_get_screen_height()) && ((obj->ay + obj->ty + obj->h) >= 0))
+
+
+    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
     {
         if ((tp->x > ((gui_page_t *)obj)->start_x) && (tp->x < ((gui_page_t *)obj)->start_x + obj->w))
         {
@@ -394,17 +375,13 @@ static void page_update_rebound(gui_obj_t *obj)
     obj_update_att(obj);
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
-    // int ay = 0;
-    // deal_img_in_root(obj, obj->y + obj->h, &ay);
-    // obj->h = ay - obj->y;
-    obj->h = gui_get_screen_height();
-    page_height(obj, obj);
-    if (obj->parent->ay != 0)
-    {
-        return;
-    }
+    int ay = 0;
+    deal_img_in_root(obj, obj->y + obj->h, &ay);
+    obj->h = ay - obj->y;
 
-    if ((obj->ax + obj->tx < (int)gui_get_screen_width()) && ((obj->ax + obj->tx + obj->w) >= 0))
+
+
+    if (gui_point_in_obj_rect(obj, tp->x, tp->y) == true)
     {
         if ((tp->x > ((gui_page_t *)obj)->start_x) && (tp->x < ((gui_page_t *)obj)->start_x + obj->w))
         {
@@ -640,13 +617,6 @@ static void page_update_rebound(gui_obj_t *obj)
             }
         }
 
-
-        if (((gui_page_t *)obj)->scroll_bar)
-        {
-            // ((gui_page_t *)obj)->scroll_bar->base.y = ((((gui_page_t *)obj)->start_y - obj->y) *
-            //                                            gui_get_screen_height() / obj->h);
-        }
-        // gui_log("obj->y:%d,%d, %d\n", obj->y, obj->ay, obj->parent->ay);
         if (obj->y == ((gui_page_t *)obj)->start_y)
         {
             obj->cover = false;

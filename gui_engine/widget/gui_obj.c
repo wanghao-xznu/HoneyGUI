@@ -19,6 +19,7 @@
  *============================================================================*/
 #include <guidef.h>
 #include <gui_obj.h>
+#include <gui_matrix.h>
 #include <string.h>
 #include <string.h>
 #include <stdio.h>
@@ -108,9 +109,9 @@ void gui_obj_ctor(gui_obj_t *this, gui_obj_t *parent, const char *name, int16_t 
     this->w = w;
     this->h = h;
 
-    this->sx = 1.0f;
-    this->sy = 1.0f;
     this->opacity_value = UINT8_MAX;
+    this->matrix = gui_malloc(sizeof(struct gui_matrix));
+    matrix_identity(this->matrix);
 
 }
 void gui_obj_dtor(gui_obj_t *this)
@@ -296,6 +297,111 @@ void gui_tree_get_cover(gui_obj_t *obj, obj_type_t target, bool *rst)
         }
         gui_tree_get_cover(obj, target, rst);
     }
+}
+
+void gui_obj_get_area(gui_obj_t *obj, int16_t *x, int16_t *y, int16_t *w, int16_t *h)
+{
+    gui_point_t p[4] =
+    {
+        {0, 0, 1},
+        {obj->w, 0, 1},
+        {0, obj->h, 1},
+        {obj->w, obj->h, 1}
+    };
+
+    float x_min = 0.0f;
+    float x_max = 0.0f;
+    float y_min = 0.0f;
+    float y_max = 0.0f;
+
+
+    pox_mul(obj->matrix, p);
+    x_min = p->p[0];
+    x_max = p->p[0];
+    y_min = p->p[1];
+    y_max = p->p[1];
+    pox_mul(obj->matrix, p + 1);
+    pox_mul(obj->matrix, p + 2);
+    pox_mul(obj->matrix, p + 3);
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[0] < x_min)
+        {
+            x_min = point->p[0];
+        }
+    }
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[0] > x_max)
+        {
+            x_max = point->p[0];
+        }
+    }
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[1] < y_min)
+        {
+            y_min = point->p[1];
+        }
+    }
+
+    for (uint32_t i = 1; i < 3; i++)
+    {
+        gui_point_t *point = p + i;
+        if (point->p[1] > y_max)
+        {
+            y_max = point->p[1];
+        }
+    }
+    *x = (int16_t)x_min;
+    *y = (int16_t)y_min;
+    *w = (int16_t)(x_max - x_min) + 1;
+    *h = (int16_t)(y_max - y_min) + 1;
+}
+
+bool gui_obj_in_rect(gui_obj_t *obj, int16_t x, int16_t y, int16_t w, int16_t h)
+{
+    int16_t m_x, m_y, m_w, m_h;//caculate by obj matrix
+    gui_obj_get_area(obj, &m_x, &m_y, &m_w, &m_h);
+
+    if ((m_x > x) && (m_x + m_h < x + w) && (m_y > y) && (m_y + m_h < y + h))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+bool gui_point_in_obj_rect(gui_obj_t *obj, int16_t x, int16_t y)
+{
+    int16_t m_x, m_y, m_w, m_h;//caculate by obj matrix
+    gui_obj_get_area(obj, &m_x, &m_y, &m_w, &m_h);
+
+    if ((m_x < x) && ((m_x + m_w) > x) && (m_y < y) && ((m_y + m_h) > y))
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void gui_obj_clear_all_parent_focusable(gui_obj_t *obj)
+{
+    for (gui_obj_t *o = obj; o->parent == NULL; o = o->parent)
+    {
+        o->focused = false;
+    }
+}
+
+void gui_obj_focusable_set(gui_obj_t *obj)
+{
+    obj->focused = true;
 }
 
 gui_color_t gui_rgba(unsigned char red, unsigned char green, unsigned char blue,

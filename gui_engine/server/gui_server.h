@@ -12,14 +12,12 @@
 extern "C" {
 #endif
 #define GUI_SERVER_THREAD_NAME "gui_s"
-
 typedef void (* touch_sync_cb)(void);
 int gui_server_init(void);
 void gui_debug_sethook(void (*hook)(void));
 bool gui_server_dlps_check(void);
 uint32_t gui_spf(void);
 void js_run_file_on_server(const char *file, gui_app_t *app);
-bool send_msg_to_gui_server(gui_msg_t *msg);
 
 #ifdef __cplusplus
 }
