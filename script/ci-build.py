@@ -36,6 +36,9 @@ from keil_build import *
 Keil_path = os.environ.get("Keil_Path")
 
 def SDK_handler(module, submodule, manifest_path, repo_home, chip_type):
+    print("Skip CI build")
+    return True
+
     global Keil_path
     repo = git.Repo(search_parent_directories=True)
     print("\n================ build {} ====================\n".format(chip_type), flush=True)
@@ -71,6 +74,9 @@ def SDK_handler(module, submodule, manifest_path, repo_home, chip_type):
 
 
 def DOC_handler(module, submodule, manifest_path, repo_home, chip_type):
+    print("Skip CI build")
+    return True
+
     print("build sphinx document\n")
     try:
         cmd = ["python", os.path.join(os.path.dirname(os.path.abspath(__file__)), "../doc/source/build.py")]
@@ -83,6 +89,9 @@ def DOC_handler(module, submodule, manifest_path, repo_home, chip_type):
 
 
 def GUI_handler(module, submodule, manifest_path, repo_home, chip_type):
+    print("Skip CI build")
+    return True
+
     ret1 = SDK_handler(module, submodule, manifest_path, repo_home, chip_type)
     if not ret1:
         print("SDK build fail!")

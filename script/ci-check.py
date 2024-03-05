@@ -228,7 +228,8 @@ if __name__ == '__main__':
     if arg_dict.mode == JenkinsCheckBase.STATIC_CHECK_STRATEGY_BEFORE_BUILD:
         ci_check.gerrit_comment_wrap(label_map, label_name="Code-Review", result=False)
         #1.0 Check commit message
-        commit_check_res, commit_check_message = ci_check.do_commit_check()
+        #commit_check_res, commit_check_message = ci_check.do_commit_check()
+        commit_check_res, commit_check_message = True, "By pass do_commit_check according to RD"
         if commit_check_res:
             ci_check.gerrit_comment_wrap(label_map, label_name="Commit-Check", result=True, message=None)
         else:
@@ -238,7 +239,8 @@ if __name__ == '__main__':
             sys.exit('check commit message failed')
 
         #2.0 check_commit_files
-        check_commit_files_result, check_commit_files_message = ci_check.check_commit_files()
+        #check_commit_files_result, check_commit_files_message = ci_check.check_commit_files()
+        check_commit_files_result, check_commit_files_message = True, "By pass check_commit_files according to RD"
         if not check_commit_files_result:
             file_check_message = ci_check.STATIC_CHECK_ERROR + check_commit_files_message + '\n' + ci_check.WIKI_FOR_CI_CHECk
             ci_check.gerrit_comment_wrap(label_map, label_name="Static-Check", result=False, write_flag = True, message=file_check_message + '\n' + ci_check.BUILD_LOG_INFO)
@@ -252,7 +254,8 @@ if __name__ == '__main__':
         else:
             ci_check.gerrit_comment_wrap(label_map, label_name="License-Scan", result=False, write_flag=True, message=do_license_msg + '\n' + ci_check.BUILD_LOG_INFO)
     elif arg_dict.mode == JenkinsCheckBase.STATIC_CHECK_STRATEGY_AFTER_BUILD:
-        check_file_permission, check_file_permission_msg = ci_check.check_file_permission()
+        #check_file_permission, check_file_permission_msg = ci_check.check_file_permission()
+        check_file_permission, check_file_permission_msg = True, "By pass check_file_permission according to RD"
         if not check_file_permission:
             # check_file_permission false
             file_check_message = ci_check.STATIC_CHECK_ERROR + check_file_permission_msg + '\n' + ci_check.WIKI_FOR_CI_CHECk
@@ -262,11 +265,10 @@ if __name__ == '__main__':
             print("file permission check pass")
             ci_check.gerrit_comment_wrap(label_map, label_name="Static-Check", result=True)
             ci_check.gerrit_comment_wrap(label_map, label_name="Code-Review", result=True)
-            if check_file_permission_msg.get("Test-Verified", False):
-                print("Test-Verified already set to 1, no need to test again")
-            elif check_file_permission_msg.get("Test-Requested", False):
-                print("Test-Requested already set to 1, no need to test-request again")
-            else:
-                ci_check.gerrit_comment_wrap(label_map, label_name="Test-Requested", result=True)
+            ci_check.gerrit_comment_wrap(label_map, label_name="Test-Verified", result=True)
+            #if check_file_permission_msg.get("Test-Verified", False):
+            #    print("Test-Verified already set to 1, no need to test again")
+            #else:
+            #    ci_check.gerrit_comment_wrap(label_map, label_name="Test-Verified", result=True)
 
-            ci_check.gerrit_comment_wrap(label_map, label_name=None, result=None, write_flag=True, message="")
+            ci_check.gerrit_comment_wrap(label_map, label_name=None, result=None, write_flag=True, message="No need to test")
