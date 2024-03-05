@@ -220,6 +220,7 @@ static void cube_prepare(gui_obj_t *obj)
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = (touch_info_t *)tp_get_info();
     gui_obj_t *root = (gui_obj_t *)obj;
+    GUI_UNUSED(root);
     // Scale the cube to proper size
     float cbsize = this->cbsize;
     // Translate the cube to the center of framebuffer.

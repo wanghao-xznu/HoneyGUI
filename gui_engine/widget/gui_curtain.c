@@ -91,14 +91,14 @@ static void curtain_prepare(gui_obj_t *obj)
 {
     gui_dispdev_t *dc = gui_get_dc();
     touch_info_t *tp = tp_get_info();
-    gui_curtain_t *ext = (gui_curtain_t *)obj;
+    gui_curtain_t *this = (gui_curtain_t *)obj;
     gui_obj_t *parent = obj->parent;
-    gui_curtainview_t *parent_ext = (gui_curtainview_t *)parent;
+    gui_curtainview_t *curtainview = (gui_curtainview_t *)parent;
     int8_t cur_idy = 0;
     int8_t cur_idx = 0;
     int8_t idy = 0;
     int8_t idx = 0;
-    switch (parent_ext->cur_curtain)
+    switch (curtainview->cur_curtain)
     {
     case CURTAIN_UP:
         cur_idy = -1;
@@ -123,7 +123,7 @@ static void curtain_prepare(gui_obj_t *obj)
     default:
         break;
     }
-    switch (ext->orientation)
+    switch (this->orientation)
     {
     case CURTAIN_UP:
         idy = -1;
@@ -160,7 +160,7 @@ static void curtain_prepare(gui_obj_t *obj)
         if (cur_idy == idy)
         {
             obj->y = (idy - cur_idy) * (int)gui_get_screen_height() + (int)gui_get_screen_height() * idy *
-                     (1 - ext->scope);
+                     (1 - this->scope);
         }
     }
     gui_log("cur_idy:%d,idy:%d, obj->y:%d\n", cur_idy, idy, obj->y);
@@ -176,15 +176,11 @@ static void curtain_prepare(gui_obj_t *obj)
         if (cur_idx == idx)
         {
             obj->x = (idx - cur_idx) * (int)gui_get_screen_width() + (int)gui_get_screen_width() * idx *
-                     (1 - ext->scope);
+                     (1 - this->scope);
         }
     }
-    if (parent_ext->cur_curtain != CURTAIN_MIDDLE)
-    {
-        // extern void gui_tree_disable_widget_gesture_by_type(gui_obj_t *obj, int type);
-        // gui_tree_disable_widget_gesture_by_type(&(gui_current_app()->screen), WINDOW);
-    }
-    obj->y += parent_ext->y;
+
+    obj->y += curtainview->release_y;
 }
 
 
