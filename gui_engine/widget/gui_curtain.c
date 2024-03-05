@@ -163,7 +163,7 @@ static void curtain_prepare(gui_obj_t *obj)
                      (1 - ext->scope);
         }
     }
-
+    gui_log("cur_idy:%d,idy:%d, obj->y:%d\n", cur_idy, idy, obj->y);
     {
         obj->x = (idx - cur_idx) * (int)gui_get_screen_width();
     }
@@ -184,7 +184,7 @@ static void curtain_prepare(gui_obj_t *obj)
         // extern void gui_tree_disable_widget_gesture_by_type(gui_obj_t *obj, int type);
         // gui_tree_disable_widget_gesture_by_type(&(gui_current_app()->screen), WINDOW);
     }
-
+    obj->y += parent_ext->y;
 }
 
 
