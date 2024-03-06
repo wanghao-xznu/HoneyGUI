@@ -102,78 +102,17 @@ static void tab_prepare(gui_obj_t *obj)
                          (this->id.y - parent->cur_id.y) * (int)this->base.h + parent->release_y, \
                          obj->matrix);
     }
+    else if (this->style == TAB_CUBE)
+    {
+        gui_tab_cube(obj);
+    }
     else if (this->style == TAB_ROTATE)
     {
-        float w = this->base.w;
-        float h = this->base.h;
-
-        Vertex_t v0 = {-w, -h, 0};
-        Vertex_t v1 = {w,  -h, 0};
-        Vertex_t v2 = {w,  h,  0};
-        Vertex_t v3 = {-w, h,  0};
-
-        Vertex_t tv0, tv1, tv2, tv3;
-        Vertex_t rv0, rv1, rv2, rv3;
-
-        gui_matrix_t rotate_3D;
-        float rotate_degree = 90 * parent->release_x / (this->base.w / 2);
-
-        if (rotate_degree >= 90)
-        {
-
-        }
-
-        matrix_compute_rotate(0, rotate_degree, 0, &rotate_3D);
-
-        matrix_transfrom_rotate(&rotate_3D, &v0, &tv0, 0, 0, 0);
-        matrix_transfrom_rotate(&rotate_3D, &v1, &tv1, 0, 0, 0);
-        matrix_transfrom_rotate(&rotate_3D, &v2, &tv2, 0, 0, 0);
-        matrix_transfrom_rotate(&rotate_3D, &v3, &tv3, 0, 0, 0);
-
-        matrix_compute_rotate(0, 0, 0, &rotate_3D);
-        float xoff = (float)dc->screen_width / 2;
-        float yoff = (float)dc->screen_height / 2 ;
-        float zoff = -(xoff + yoff);
-
-        matrix_transfrom_rotate(&rotate_3D, &tv0, &rv0, xoff, yoff, zoff);
-        matrix_transfrom_rotate(&rotate_3D, &tv1, &rv1, xoff, yoff, zoff);
-        matrix_transfrom_rotate(&rotate_3D, &tv2, &rv2, xoff, yoff, zoff);
-        matrix_transfrom_rotate(&rotate_3D, &tv3, &rv3, xoff, yoff, zoff);
-        Vertex_t p = {(float)(dc->screen_width) / 2, (float)(dc->screen_height) / 2, -zoff};
-        gui_matrix_t temp;
-        matrix_transfrom_blit(this->base.w, this->base.h, &p, &rv0, &rv1, &rv2, &rv3,
-                              &temp);
-
-        matrix_translate((this->id.x - parent->cur_id.x) * (int)this->base.w, \
-                         (this->id.y - parent->cur_id.y) * (int)this->base.h, \
-                         obj->matrix);
-        matrix_multiply(obj->matrix, &temp);
-
+        gui_tab_rotate(obj);
     }
     else if (this->style == REDUCTION)
     {
-
-        matrix_translate((this->id.x - parent->cur_id.x) * (int)this->base.w + parent->release_x, \
-                         (this->id.y - parent->cur_id.y) * (int)this->base.h + parent->release_y, \
-                         obj->matrix);
-
-
-        int sx = abs((this->id.x - parent->cur_id.x) * (int)this->base.w + parent->release_x);
-        sx = sx % this->base.w;
-        float s = 1.0f - (float)sx / this->base.w;
-
-        if (s < 0.2f)
-        {
-            s = 0.2f;
-        }
-        if (s >= 1.0f)
-        {
-            s = 1.0f;
-        }
-
-        matrix_translate(dc->screen_width / 2, dc->screen_height / 2, obj->matrix);
-        matrix_scale(s, s, obj->matrix);
-        matrix_translate(-dc->screen_width / 2, -dc->screen_height / 2, obj->matrix);
+        gui_tab_reduction(obj);
     }
     else if (this->style == FADE)
     {
@@ -295,6 +234,11 @@ static void gui_tab_ctor(gui_tab_t *this, gui_obj_t *parent, const char *filenam
     this->id.x = idx;
     this->id.y = idy;
     this->id.z = idy;
+
+    this->normal.x = 0;
+    this->normal.y = 0;
+    this->normal.z = 1.0f;
+
     parent_ext->tab_cnt++;
     if (idx > 0)
     {

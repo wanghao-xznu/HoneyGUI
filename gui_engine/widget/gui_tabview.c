@@ -87,6 +87,14 @@
 
 
 #include "gui_tab.h"
+
+static void input_prepare(gui_obj_t *obj)
+{
+    touch_info_t *tp = tp_get_info();
+    GUI_UNUSED(tp);
+    obj->focused = true;
+}
+
 static void tabview_prepare(gui_obj_t *obj)
 {
     gui_dispdev_t *dc = gui_get_dc();
@@ -425,6 +433,7 @@ gui_tabview_t *gui_tabview_create(void *parent, const char *filename, int16_t x,
         h = (int)gui_get_screen_height();
     }
     gui_obj_ctor(&this->base, parent, filename, x, y, w, h);
+    GET_BASE(this)->obj_input_prepare = input_prepare;
     GET_BASE(this)->obj_prepare = tabview_prepare;
     GET_BASE(this)->type = TABVIEW;
     gui_list_init(&(GET_BASE(this)->child_list));

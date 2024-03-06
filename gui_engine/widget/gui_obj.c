@@ -315,14 +315,17 @@ void gui_obj_get_area(gui_obj_t *obj, int16_t *x, int16_t *y, int16_t *w, int16_
     float y_max = 0.0f;
 
 
-    pox_mul(obj->matrix, p);
+
+    matrix_multiply_point(obj->matrix, p);
     x_min = p->p[0];
     x_max = p->p[0];
     y_min = p->p[1];
     y_max = p->p[1];
-    pox_mul(obj->matrix, p + 1);
-    pox_mul(obj->matrix, p + 2);
-    pox_mul(obj->matrix, p + 3);
+
+    matrix_multiply_point(obj->matrix, p + 1);
+    matrix_multiply_point(obj->matrix, p + 2);
+    matrix_multiply_point(obj->matrix, p + 3);
+
 
     for (uint32_t i = 1; i < 3; i++)
     {
@@ -393,7 +396,7 @@ bool gui_point_in_obj_rect(gui_obj_t *obj, int16_t x, int16_t y)
 
 void gui_obj_clear_all_parent_focusable(gui_obj_t *obj)
 {
-    for (gui_obj_t *o = obj; o->parent == NULL; o = o->parent)
+    for (gui_obj_t *o = obj; o->parent != NULL; o = o->parent)
     {
         o->focused = false;
     }

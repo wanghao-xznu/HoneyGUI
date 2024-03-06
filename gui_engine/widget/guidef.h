@@ -411,6 +411,7 @@ typedef struct _gui_obj_t
     gui_list_t  brother_list;
 
     //run time
+    void (* obj_input_prepare)(struct _gui_obj_t *obj);
     void (* obj_prepare)(struct _gui_obj_t *obj);
     void (* obj_draw)(struct _gui_obj_t *obj);
     void (* obj_end)(struct _gui_obj_t *obj);

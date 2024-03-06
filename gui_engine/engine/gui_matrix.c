@@ -239,6 +239,24 @@ void matrix_identity(struct gui_matrix *matrix)
     matrix->m[2][1] = 0.0f;
     matrix->m[2][2] = 1.0f;
 }
+
+void matrix_multiply_normal(struct gui_matrix *matrix, Normal_t *normal)
+{
+    Normal_t temp;
+    int row;
+
+    /* Process all rows. */
+
+    temp.x = (matrix->m[0][0] * normal->x) + (matrix->m[0][1] * normal->y) +
+             (matrix->m[0][2] * normal->z);
+    temp.y = (matrix->m[1][0] * normal->x) + (matrix->m[1][1] * normal->y) +
+             (matrix->m[1][2] * normal->z);
+    temp.z = (matrix->m[2][0] * normal->x) + (matrix->m[2][1] * normal->y) +
+             (matrix->m[2][2] * normal->z);
+
+    memcpy(normal, &temp, sizeof(temp));
+}
+
 void matrix_multiply(struct gui_matrix *matrix, struct gui_matrix *mult)
 {
     struct gui_matrix temp;
@@ -261,7 +279,8 @@ void matrix_multiply(struct gui_matrix *matrix, struct gui_matrix *mult)
     memcpy(matrix, &temp, sizeof(temp));
 }
 
-void pox_mul(struct gui_matrix *matrix, struct gui_point *pox)
+
+void matrix_multiply_point(struct gui_matrix *matrix, struct gui_point *pox)
 {
     struct gui_point temp;
     int row;

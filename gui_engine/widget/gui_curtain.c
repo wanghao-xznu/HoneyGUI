@@ -148,9 +148,9 @@ static void curtain_prepare(gui_obj_t *obj)
     default:
         break;
     }
-    {
-        obj->y = (idy - cur_idy) * (int)gui_get_screen_height() ;
-    }
+
+    obj->y = (idy - cur_idy) * (int)gui_get_screen_height() ;
+
     if ((0 == idy))
     {
         obj->y = 0 - parent->y;

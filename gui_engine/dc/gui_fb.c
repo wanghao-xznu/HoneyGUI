@@ -35,14 +35,14 @@ static bool obj_is_active(gui_obj_t *obj)
     float y_max = 0.0f;
 
 
-    pox_mul(obj->matrix, p);
+    matrix_multiply_point(obj->matrix, p);
     x_min = p->p[0];
     x_max = p->p[0];
     y_min = p->p[1];
     y_max = p->p[1];
-    pox_mul(obj->matrix, p + 1);
-    pox_mul(obj->matrix, p + 2);
-    pox_mul(obj->matrix, p + 3);
+    matrix_multiply_point(obj->matrix, p + 1);
+    matrix_multiply_point(obj->matrix, p + 2);
+    matrix_multiply_point(obj->matrix, p + 3);
 
     for (uint32_t i = 1; i < 3; i++)
     {
@@ -84,14 +84,27 @@ static bool obj_is_active(gui_obj_t *obj)
         (y_min < (int)gui_get_screen_height()) && (y_max > 0))
     {
         obj->active = true;
-        obj->focused = true;
         return true;
     }
-    obj->focused = false;
 
     return false;
 }
 
+static void obj_input_prepare(gui_obj_t *obj)
+{
+    gui_list_t *node = NULL;
+    gui_list_for_each(node, &obj->child_list)
+    {
+        gui_obj_t *obj = gui_list_entry(node, gui_obj_t, brother_list);
+
+        if (obj->obj_input_prepare != NULL)
+        {
+            obj->obj_input_prepare(obj);
+        }
+
+        obj_input_prepare(obj);
+    }
+}
 
 static void obj_draw_prepare(gui_obj_t *object)
 {
@@ -302,6 +315,7 @@ void gui_fb_disp(gui_obj_t *root)
         return;
     }
 
+    obj_input_prepare(root);
     obj_draw_prepare(root);
 
     static int last_ms;

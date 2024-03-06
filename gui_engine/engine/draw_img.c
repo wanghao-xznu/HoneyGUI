@@ -90,7 +90,7 @@ bool gui_image_new_area(draw_img_t *img)
     pox.p[0] = 0.0f;
     pox.p[1] = 0.0f;
     pox.p[2] = 1.0f;
-    pox_mul(img->matrix, &pox);
+    matrix_multiply_point(img->matrix, &pox);
     x_min = pox.p[0];
     x_max = pox.p[0];
     y_min = pox.p[1];
@@ -100,7 +100,7 @@ bool gui_image_new_area(draw_img_t *img)
     pox.p[0] = (float)img->img_w - 1;
     pox.p[1] = 0.0f;
     pox.p[2] = 1.0f;
-    pox_mul(img->matrix, &pox);
+    matrix_multiply_point(img->matrix, &pox);
     if (x_min > pox.p[0])
     {
         x_min = pox.p[0];
@@ -122,7 +122,7 @@ bool gui_image_new_area(draw_img_t *img)
     pox.p[0] = 0.0f;
     pox.p[1] = (float)img->img_h - 1;
     pox.p[2] = 1.0f;
-    pox_mul(img->matrix, &pox);
+    matrix_multiply_point(img->matrix, &pox);
     if (x_min > pox.p[0])
     {
         x_min = pox.p[0];
@@ -143,7 +143,7 @@ bool gui_image_new_area(draw_img_t *img)
     pox.p[0] = (float)img->img_w - 1;
     pox.p[1] = (float)img->img_h - 1;
     pox.p[2] = 1.0f;
-    pox_mul(img->matrix, &pox);
+    matrix_multiply_point(img->matrix, &pox);
     if (x_min > pox.p[0])
     {
         x_min = pox.p[0];

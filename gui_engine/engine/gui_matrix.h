@@ -45,7 +45,8 @@ void matrix_rotate(float degrees, struct gui_matrix *matrix);
 void matrix_inverse(struct gui_matrix *matrix);
 void matrix_scale(float scale_x, float scale_y, struct gui_matrix *matrix);
 void matrix_perspective(float px, float py, struct gui_matrix *matrix);
-void pox_mul(struct gui_matrix *matrix, struct gui_point *pox);
+void matrix_multiply_point(struct gui_matrix *matrix, struct gui_point *pox);
+void matrix_multiply_normal(struct gui_matrix *matrix, Normal_t *normal);
 
 float fix_cos(int angle);
 float fix_sin(int angle);

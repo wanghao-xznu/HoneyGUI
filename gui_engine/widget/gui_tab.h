@@ -31,6 +31,7 @@ extern "C" {
 #include <guidef.h>
 #include <gui_fb.h>
 #include "gui_tabview.h"
+#include "gui_matrix.h"
 
 /** @defgroup WIDGET WIDGET
   * @brief
@@ -73,6 +74,7 @@ typedef struct gui_tab
     gui_obj_t base;             //!< base structure
     gui_tab_id_t id;
     SLIDE_STYLE style;
+    Normal_t normal;
 } gui_tab_t;
 
 /** @brief  tab widget stacking structure */
@@ -143,6 +145,27 @@ gui_tab_t *gui_tab_create(void *parent, const char *filename, int16_t x, int16_t
  * @param style slide style
  */
 void gui_tab_set_style(gui_tab_t *this, SLIDE_STYLE style);
+
+/**
+ * @brief
+ *
+ * @param obj
+ */
+void gui_tab_rotate(gui_obj_t *obj);
+
+/**
+ * @brief
+ *
+ * @param obj
+ */
+void gui_tab_reduction(gui_obj_t *obj);
+
+/**
+ * @brief
+ *
+ * @param obj
+ */
+void gui_tab_cube(gui_obj_t *obj);
 
 /** End of WIDGET_Exported_GUI_Functions
   * @}
