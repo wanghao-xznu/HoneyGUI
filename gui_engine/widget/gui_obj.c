@@ -402,6 +402,28 @@ void gui_obj_clear_all_parent_focusable(gui_obj_t *obj)
     }
 }
 
+void gui_obj_clear_all_child_focusable(gui_obj_t *obj)
+{
+    gui_list_t *node = NULL;
+    gui_list_for_each(node, &obj->child_list)
+    {
+        gui_obj_t *o = gui_list_entry(node, gui_obj_t, brother_list);
+        o->focused = false;
+        gui_obj_clear_all_child_focusable(o);
+    }
+}
+
+void gui_obj_clear_all_focusable(gui_obj_t *obj)
+{
+    gui_obj_t *o = obj;
+    while (o->parent != NULL)
+    {
+        o = o->parent;
+    }
+    gui_obj_clear_all_child_focusable(o);
+
+}
+
 void gui_obj_focusable_set(gui_obj_t *obj)
 {
     obj->focused = true;
