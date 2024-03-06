@@ -401,7 +401,18 @@ void gui_obj_clear_all_parent_focusable(gui_obj_t *obj)
         o->focused = false;
     }
 }
+void gui_seek_parent(gui_obj_t *obj, obj_type_t type, gui_obj_t **output)
+{
+    for (gui_obj_t *o = obj; o->parent != NULL; o = o->parent)
+    {
+        if (o->type == type)
+        {
+            *output = o;
+            return;
+        }
 
+    }
+}
 void gui_obj_clear_all_child_focusable(gui_obj_t *obj)
 {
     gui_list_t *node = NULL;

@@ -163,7 +163,7 @@ static void curtain_prepare(gui_obj_t *obj)
                      (1 - this->scope);
         }
     }
-    gui_log("cur_idy:%d,idy:%d, obj->y:%d\n", cur_idy, idy, obj->y);
+    //gui_log("cur_idy:%d,idy:%d, obj->y:%d\n", cur_idy, idy, obj->y);
     {
         obj->x = (idx - cur_idx) * (int)gui_get_screen_width();
     }
@@ -181,6 +181,7 @@ static void curtain_prepare(gui_obj_t *obj)
     }
 
     obj->y += curtainview->release_y;
+    obj->x += curtainview->release_x;
 }
 
 

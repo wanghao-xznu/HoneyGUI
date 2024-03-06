@@ -302,7 +302,10 @@ bool gui_obj_in_rect(gui_obj_t *obj, int16_t x, int16_t y, int16_t w, int16_t h)
  * @param obj
  */
 void gui_obj_clear_all_parent_focusable(gui_obj_t *obj);
-
+/**
+ *
+*/
+void gui_seek_parent(gui_obj_t *obj, obj_type_t type, gui_obj_t **output);
 /**
  * @brief
  *
