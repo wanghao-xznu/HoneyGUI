@@ -192,6 +192,14 @@ void matrix_transfrom_blit(float w, float h, Vertex_t *p, Vertex_t *v0, Vertex_t
 
     Point2f_t src[4] = {{0, 0}, {w, 0}, {w, h}, {0, h}};
     Point2f_t dst[4] = {{x0, y0}, {x1, y1}, {x2, y2}, {x3, y3}};
+    v0->x = x0;
+    v1->x = x1;
+    v2->x = x2;
+    v3->x = x3;
+    v0->y = y0;
+    v1->y = y1;
+    v2->y = y2;
+    v3->y = y3;
     float *answer = (float *)matrix->m;
     getPerspectiveTransform(src, dst, answer);
 }

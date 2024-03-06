@@ -237,7 +237,7 @@ static void gui_tab_ctor(gui_tab_t *this, gui_obj_t *parent, const char *filenam
 
     this->normal.x = 0;
     this->normal.y = 0;
-    this->normal.z = 1.0f;
+    this->normal.z = -1.0f;
 
     parent_ext->tab_cnt++;
     if (idx > 0)

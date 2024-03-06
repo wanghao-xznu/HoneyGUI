@@ -128,23 +128,45 @@ void gui_tab_cube(gui_obj_t *obj)
     matrix_transfrom_rotate(&rotate_3D, &tv1, &rv1, xoff, yoff, zoff);
     matrix_transfrom_rotate(&rotate_3D, &tv2, &rv2, xoff, yoff, zoff);
     matrix_transfrom_rotate(&rotate_3D, &tv3, &rv3, xoff, yoff, zoff);
+
+
+
+
     Vertex_t p = {(float)(dc->screen_width) / 2, (float)(dc->screen_height) / 2, xoff + yoff};
     gui_matrix_t temp;
     matrix_transfrom_blit(this->base.w, this->base.h, &p, &rv0, &rv1, &rv2, &rv3,
                           &temp);
 
-    matrix_multiply_normal(&temp, &this->normal);
+#if 0
+    float dot0 = this->normal.x * rv0.x + this->normal.y * rv0.y + this->normal.z * rv0.z;
+    float dot1 = this->normal.x * rv1.x + this->normal.y * rv1.y + this->normal.z * rv1.z;
+    float dot2 = this->normal.x * rv2.x + this->normal.y * rv2.y + this->normal.z * rv2.z;
+    float dot3 = this->normal.x * rv3.x + this->normal.y * rv3.y + this->normal.z * rv3.z;
+
+    if ((dot0 < 0) || (dot1 < 0) || (dot2 < 0) || (dot3 < 0))
+    {
+        obj->not_show = true;//todo
+    }
+#else
+
+    if (rv0.x > rv1.x)
+    {
+        obj->not_show = true;
+    }
+#endif
 
     matrix_translate((this->id.x - parent->cur_id.x) * (int)this->base.w, \
                      (this->id.y - parent->cur_id.y) * (int)this->base.h, \
                      obj->matrix);
-    if ((this->id.x - parent->cur_id.x) == 1)
+    if (abs(this->id.x - parent->cur_id.x) == 1)
     {
         matrix_translate(-(this->id.x - parent->cur_id.x) * (int)this->base.w, \
                          -(this->id.y - parent->cur_id.y) * (int)this->base.h, \
                          obj->matrix);
     }
+
     matrix_multiply(obj->matrix, &temp);
+
 }
 
 /** End of WIDGET_Exported_Functions

@@ -557,7 +557,7 @@ extern char *defaultPath;
 
 #define GET_BASE(_p) ((gui_obj_t *)_p)
 #if defined _WIN32
-#define GUI_FRAME_STEP 1
+#define GUI_FRAME_STEP 3
 #else
 #define GUI_FRAME_STEP 50
 #endif

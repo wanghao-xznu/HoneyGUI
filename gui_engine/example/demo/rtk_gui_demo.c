@@ -52,7 +52,7 @@ static PX_OBJECT_RENDER_FUNCTION(PX_Object_3DModelRender)
     objHeight = pObject->Height;
 
     PX_SurfaceClearAll(& pDesc->renderSurface, PX_COLOR(255, 0, 0, 0));
-    PX_Object_3DModelSetWorld(pObject, 0, 0, 1.2f, 0, rotY++, 0, 1);
+    PX_Object_3DModelSetWorld(pObject, 2, 2, 5.0f, 0, 90, 0, 1);
     PX_3D_Scene(&pDesc->renderlist, &pDesc->world, &pDesc->camera);
     PX_3D_Present(&pDesc->renderSurface, &pDesc->renderlist, &pDesc->camera);
     PX_SurfaceRender(psurface, &pDesc->renderSurface, (px_int)objx, (px_int)objy, PX_ALIGN_CENTER,
@@ -71,7 +71,7 @@ static void px_main(gui_px_t *this)
     PX_Object *pObject;
 
 #if defined _WIN32
-    io = PX_LoadFileToIOData("win32_sim/assets/bunny.obj");
+    io = PX_LoadFileToIOData("win32_sim/assets/20255_Triangular_Prism_V1.obj");
 #else
     io = PX_LoadFileToIOData("/win32_sim/assets/bunny.obj");
 #endif
@@ -87,12 +87,12 @@ static void px_main(gui_px_t *this)
         return;
     }
 
-    pObject = PX_Object_3DModelCreate(this->mp_dynamic, this->px_root, 368 / 2, 448 / 2, 368, 448,
+    pObject = PX_Object_3DModelCreate(this->mp_dynamic, this->px_root, 454 / 2, 454 / 2, 454, 454,
                                       &data);
 
     pObject->Func_ObjectRender = PX_Object_3DModelRender;
 
-    PX_Object_3DModelSetWorld(pObject, 0, 0, 1.2f, 0, 0, 0, 1);
+    PX_Object_3DModelSetWorld(pObject, 0, 0, 5.0f, 0, 0, 0, 1);
     PX_Object_3DModel *pdesc = PX_ObjectGetDesc(PX_Object_3DModel, pObject);
     PX_3D_RenderListSetPixelShader(&pdesc->renderlist, PX_Object_3DModel_PixelShader);
 }
@@ -123,7 +123,8 @@ static void app_dialing_ui_design(gui_app_t *app)
     gui_canvas_t *canvas = gui_canvas_create(tab_1, "canvas", 0, 0, 0, 454, 454);
     gui_canvas_set_canvas_cb(canvas, canvas_cb_black);
 
-    // gui_px_t *px = gui_px_create(&app->screen, "px-test", px_main, 0, 0, 454, 454);
+    gui_px_t *px = gui_px_create(&app->screen, "px-test", px_main, 0, 0, 454, 454);
+    return;
 
     gui_cube_imgfile_t image_file;
     memset(&image_file, 0, sizeof(gui_cube_imgfile_t));
