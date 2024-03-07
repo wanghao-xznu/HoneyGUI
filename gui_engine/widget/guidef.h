@@ -420,14 +420,21 @@ typedef struct _gui_obj_t
     //void (* obj_cb)(struct _gui_obj_t *obj); todo
     //run time
     obj_type_t type; //no need this , only use name
-    uint16_t active         : 1;    // this flag means obj location in screen
-    uint16_t not_show       : 1;
-    uint16_t cover          : 1;
-    uint16_t focused        : 1;
-    uint16_t create_done    : 1;
-    uint16_t flag_3d        : 1;
+    uint32_t active         : 1;    // this flag means obj location in screen
+    uint32_t not_show       : 1;
+    uint32_t cover          : 1;
+    //uint32_t focused        : 1;
+    uint32_t skip_tp_left_hold    : 1;
+    uint32_t skip_tp_right_hold   : 1;
+    uint32_t skip_tp_up_hold      : 1;
+    uint32_t skip_tp_down_hold    : 1;
+    //uint32_t skip_tp_left_quick   : 1;
 
-    uint16_t event_dsc_cnt  : 5;
+
+    uint32_t create_done    : 1;
+    uint32_t flag_3d        : 1;
+    uint32_t event_dsc_cnt  : 5;
+
     gui_event_dsc_t *event_dsc;
 
 

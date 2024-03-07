@@ -149,39 +149,34 @@ static void curtain_prepare(gui_obj_t *obj)
         break;
     }
 
-    obj->y = (idy - cur_idy) * (int)gui_get_screen_height() ;
+    int16_t dy = 0;
+    int16_t dx = 0;
 
-    if ((0 == idy))
+    if (cur_idy == idy)
     {
-        obj->y = 0 - parent->y;
+        dy = (int)gui_get_screen_height() * idy * (1 - this->scope);
     }
     else
     {
-        if (cur_idy == idy)
-        {
-            obj->y = (idy - cur_idy) * (int)gui_get_screen_height() + (int)gui_get_screen_height() * idy *
-                     (1 - this->scope);
-        }
+        dy = (idy - cur_idy) * (int)gui_get_screen_height();
     }
-    //gui_log("cur_idy:%d,idy:%d, obj->y:%d\n", cur_idy, idy, obj->y);
+    dy += curtainview->release_y;
+
+
+
+
+    if (cur_idx == idx)
     {
-        obj->x = (idx - cur_idx) * (int)gui_get_screen_width();
-    }
-    if ((0 == idx))
-    {
-        obj->x = 0 - parent->x;
+        dx = (int)gui_get_screen_width() * idx * (1 - this->scope);
     }
     else
     {
-        if (cur_idx == idx)
-        {
-            obj->x = (idx - cur_idx) * (int)gui_get_screen_width() + (int)gui_get_screen_width() * idx *
-                     (1 - this->scope);
-        }
+        dx = (idx - cur_idx) * (int)gui_get_screen_width();
     }
+    dx += curtainview->release_x;
 
-    obj->y += curtainview->release_y;
-    obj->x += curtainview->release_x;
+    matrix_translate(dx, dy, obj->matrix);
+
 }
 
 
@@ -208,22 +203,18 @@ void gui_curtain_ctor(gui_curtain_t *this, gui_obj_t *parent, const char *filena
         case CURTAIN_UP:
             parent_ext->orientations.up = true;
             parent_ext->scopeup = this->scope;
-            GET_BASE(this)->y = -(int)gui_get_screen_height();
             break;
         case CURTAIN_DOWN:
             parent_ext->orientations.down = true;
             parent_ext->scopedown = this->scope;
-            GET_BASE(this)->y = (int)gui_get_screen_height();
             break;
         case CURTAIN_LEFT:
             parent_ext->orientations.left = true;
             parent_ext->scopeleft = this->scope;
-            GET_BASE(this)->x = -(int)gui_get_screen_width();
             break;
         case CURTAIN_RIGHT:
             parent_ext->orientations.right = true;
             parent_ext->scoperight = this->scope;
-            GET_BASE(this)->x = (int)gui_get_screen_width();
             break;
         default:
             break;
@@ -238,6 +229,27 @@ void gui_curtain_ctor(gui_curtain_t *this, gui_obj_t *parent, const char *filena
 gui_curtain_t *gui_curtain_create(void *parent, const char *filename, int16_t x, int16_t y,
                                   int16_t w, int16_t h, gui_curtain_enum_t orientation, float scope)
 {
+    gui_curtainview_t *curtainview = (gui_curtainview_t *)parent;
+    if (orientation == CURTAIN_MIDDLE)
+    {
+        curtainview->has_center_curtain = true;
+    }
+    else if (orientation == CURTAIN_LEFT)
+    {
+        curtainview->has_left_curtain = true;
+    }
+    else if (orientation == CURTAIN_RIGHT)
+    {
+        curtainview->has_right_curtain = true;
+    }
+    else if (orientation == CURTAIN_UP)
+    {
+        curtainview->has_up_curtain = true;
+    }
+    else if (orientation == CURTAIN_DOWN)
+    {
+        curtainview->has_down_curtain = true;
+    }
 #define _paramgui_curtain_create_ this, parent, filename, x, y, w, h, orientation, scope
     GUI_NEW(gui_curtain_t, gui_curtain_ctor, _paramgui_curtain_create_)
 }

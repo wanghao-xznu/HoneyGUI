@@ -138,18 +138,16 @@ void gui_tab_cube(gui_obj_t *obj)
                           &temp);
 
 #if 0
-    float dot0 = this->normal.x * rv0.x + this->normal.y * rv0.y + this->normal.z * rv0.z;
-    float dot1 = this->normal.x * rv1.x + this->normal.y * rv1.y + this->normal.z * rv1.z;
-    float dot2 = this->normal.x * rv2.x + this->normal.y * rv2.y + this->normal.z * rv2.z;
-    float dot3 = this->normal.x * rv3.x + this->normal.y * rv3.y + this->normal.z * rv3.z;
-
-    if ((dot0 < 0) || (dot1 < 0) || (dot2 < 0) || (dot3 < 0))
+    if (rv0.x > rv1.x)
     {
-        obj->not_show = true;//todo
+        obj->not_show = true;
     }
 #else
-
-    if (rv0.x > rv1.x)
+    float x1 = rv1.x - rv3.x;
+    float y1 = rv1.y - rv3.y;
+    float x2 = rv2.x - rv0.x;
+    float y2 = rv2.y - rv0.y;
+    if ((x1 * y2 - x2 * y1) < 0)
     {
         obj->not_show = true;
     }

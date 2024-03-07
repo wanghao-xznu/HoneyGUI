@@ -304,9 +304,9 @@ void gui_obj_get_area(gui_obj_t *obj, int16_t *x, int16_t *y, int16_t *w, int16_
     gui_point_t p[4] =
     {
         {0, 0, 1},
-        {obj->w, 0, 1},
-        {0, obj->h, 1},
-        {obj->w, obj->h, 1}
+        {obj->w - 1, 0, 1},
+        {0, obj->h - 1, 1},
+        {obj->w - 1, obj->h - 1, 1}
     };
 
     float x_min = 0.0f;
@@ -373,7 +373,7 @@ bool gui_obj_in_rect(gui_obj_t *obj, int16_t x, int16_t y, int16_t w, int16_t h)
     int16_t m_x, m_y, m_w, m_h;//caculate by obj matrix
     gui_obj_get_area(obj, &m_x, &m_y, &m_w, &m_h);
 
-    if ((m_x > x) && (m_x + m_h < x + w) && (m_y > y) && (m_y + m_h < y + h))
+    if ((m_x >= x) && (m_x + m_w <= x + w) && (m_y >= y) && (m_y + m_h <= y + h))
     {
         return true;
     }
@@ -394,51 +394,122 @@ bool gui_point_in_obj_rect(gui_obj_t *obj, int16_t x, int16_t y)
     return false;
 }
 
-void gui_obj_clear_all_parent_focusable(gui_obj_t *obj)
+void gui_obj_skip_all_parent_left_hold(gui_obj_t *obj)
 {
     for (gui_obj_t *o = obj; o->parent != NULL; o = o->parent)
     {
-        o->focused = false;
+        o->skip_tp_left_hold = true;
     }
 }
-void gui_seek_parent(gui_obj_t *obj, obj_type_t type, gui_obj_t **output)
-{
-    for (gui_obj_t *o = obj; o->parent != NULL; o = o->parent)
-    {
-        if (o->type == type)
-        {
-            *output = o;
-            return;
-        }
 
-    }
-}
-void gui_obj_clear_all_child_focusable(gui_obj_t *obj)
+void gui_obj_skip_all_child_left_hold(gui_obj_t *obj)
 {
     gui_list_t *node = NULL;
     gui_list_for_each(node, &obj->child_list)
     {
         gui_obj_t *o = gui_list_entry(node, gui_obj_t, brother_list);
-        o->focused = false;
-        gui_obj_clear_all_child_focusable(o);
+        o->skip_tp_left_hold = true;
+        gui_obj_skip_all_child_left_hold(o);
     }
 }
 
-void gui_obj_clear_all_focusable(gui_obj_t *obj)
+void gui_obj_skip_all_left_hold(gui_obj_t *obj)
 {
     gui_obj_t *o = obj;
     while (o->parent != NULL)
     {
         o = o->parent;
     }
-    gui_obj_clear_all_child_focusable(o);
-
+    gui_obj_skip_all_child_left_hold(o);
 }
 
-void gui_obj_focusable_set(gui_obj_t *obj)
+void gui_obj_skip_all_parent_right_hold(gui_obj_t *obj)
 {
-    obj->focused = true;
+    for (gui_obj_t *o = obj; o->parent != NULL; o = o->parent)
+    {
+        o->skip_tp_right_hold = true;
+    }
 }
+
+void gui_obj_skip_all_child_right_hold(gui_obj_t *obj)
+{
+    gui_list_t *node = NULL;
+    gui_list_for_each(node, &obj->child_list)
+    {
+        gui_obj_t *o = gui_list_entry(node, gui_obj_t, brother_list);
+        o->skip_tp_right_hold = true;
+        gui_obj_skip_all_child_right_hold(o);
+    }
+}
+
+void gui_obj_skip_all_right_hold(gui_obj_t *obj)
+{
+    gui_obj_t *o = obj;
+    while (o->parent != NULL)
+    {
+        o = o->parent;
+    }
+    gui_obj_skip_all_child_right_hold(o);
+}
+
+void gui_obj_skip_all_parent_up_hold(gui_obj_t *obj)
+{
+    for (gui_obj_t *o = obj; o->parent != NULL; o = o->parent)
+    {
+        o->skip_tp_up_hold = true;
+    }
+}
+
+void gui_obj_skip_all_child_up_hold(gui_obj_t *obj)
+{
+    gui_list_t *node = NULL;
+    gui_list_for_each(node, &obj->child_list)
+    {
+        gui_obj_t *o = gui_list_entry(node, gui_obj_t, brother_list);
+        o->skip_tp_up_hold = true;
+        gui_obj_skip_all_child_up_hold(o);
+    }
+}
+
+void gui_obj_skip_all_up_hold(gui_obj_t *obj)
+{
+    gui_obj_t *o = obj;
+    while (o->parent != NULL)
+    {
+        o = o->parent;
+    }
+    gui_obj_skip_all_child_up_hold(o);
+}
+
+void gui_obj_skip_all_parent_down_hold(gui_obj_t *obj)
+{
+    for (gui_obj_t *o = obj; o->parent != NULL; o = o->parent)
+    {
+        o->skip_tp_down_hold = true;
+    }
+}
+
+void gui_obj_skip_all_child_down_hold(gui_obj_t *obj)
+{
+    gui_list_t *node = NULL;
+    gui_list_for_each(node, &obj->child_list)
+    {
+        gui_obj_t *o = gui_list_entry(node, gui_obj_t, brother_list);
+        o->skip_tp_down_hold = true;
+        gui_obj_skip_all_child_down_hold(o);
+    }
+}
+
+void gui_obj_skip_all_down_hold(gui_obj_t *obj)
+{
+    gui_obj_t *o = obj;
+    while (o->parent != NULL)
+    {
+        o = o->parent;
+    }
+    gui_obj_skip_all_child_down_hold(o);
+}
+
 
 gui_color_t gui_rgba(unsigned char red, unsigned char green, unsigned char blue,
                      unsigned char opacity)

@@ -301,24 +301,33 @@ bool gui_obj_in_rect(gui_obj_t *obj, int16_t x, int16_t y, int16_t w, int16_t h)
  *
  * @param obj
  */
-void gui_obj_clear_all_parent_focusable(gui_obj_t *obj);
-/**
- *
-*/
-void gui_seek_parent(gui_obj_t *obj, obj_type_t type, gui_obj_t **output);
-/**
- * @brief
- *
- * @param obj
- */
-void gui_obj_clear_all_child_focusable(gui_obj_t *obj);
+void gui_obj_skip_all_parent_left_hold(gui_obj_t *obj);
 
 /**
  * @brief
  *
  * @param obj
  */
-void gui_obj_clear_all_focusable(gui_obj_t *obj);
+void gui_obj_skip_all_child_left_hold(gui_obj_t *obj);
+
+/**
+ * @brief
+ *
+ * @param obj
+ */
+void gui_obj_skip_all_left_hold(gui_obj_t *obj);
+
+void gui_obj_skip_all_parent_right_hold(gui_obj_t *obj);
+void gui_obj_skip_all_child_right_hold(gui_obj_t *obj);
+void gui_obj_skip_all_right_hold(gui_obj_t *obj);
+
+void gui_obj_skip_all_parent_down_hold(gui_obj_t *obj);
+void gui_obj_skip_all_child_down_hold(gui_obj_t *obj);
+void gui_obj_skip_all_down_hold(gui_obj_t *obj);
+
+void gui_obj_skip_all_parent_up_hold(gui_obj_t *obj);
+void gui_obj_skip_all_child_up_hold(gui_obj_t *obj);
+void gui_obj_skip_all_up_hold(gui_obj_t *obj);
 
 /**
  * @brief judge the point if in range of this obj rect

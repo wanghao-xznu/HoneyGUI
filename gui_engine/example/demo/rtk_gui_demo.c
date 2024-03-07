@@ -123,8 +123,7 @@ static void app_dialing_ui_design(gui_app_t *app)
     gui_canvas_t *canvas = gui_canvas_create(tab_1, "canvas", 0, 0, 0, 454, 454);
     gui_canvas_set_canvas_cb(canvas, canvas_cb_black);
 
-    gui_px_t *px = gui_px_create(&app->screen, "px-test", px_main, 0, 0, 454, 454);
-    return;
+    // gui_px_t *px = gui_px_create(&app->screen, "px-test", px_main, 0, 0, 454, 454);
 
     gui_cube_imgfile_t image_file;
     memset(&image_file, 0, sizeof(gui_cube_imgfile_t));

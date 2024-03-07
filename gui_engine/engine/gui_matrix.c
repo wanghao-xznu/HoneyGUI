@@ -251,7 +251,6 @@ void matrix_identity(struct gui_matrix *matrix)
 void matrix_multiply_normal(struct gui_matrix *matrix, Normal_t *normal)
 {
     Normal_t temp;
-    int row;
 
     /* Process all rows. */
 

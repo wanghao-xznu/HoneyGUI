@@ -91,7 +91,16 @@ typedef struct gui_curtainview
     bool release_flag;
     int spring_value;
     void (*done_cb)(struct gui_curtainview *this);
-    bool mute;
+
+    uint16_t has_center_curtain          : 1;
+    uint16_t has_left_curtain            : 1;
+    uint16_t has_right_curtain           : 1;
+    uint16_t has_up_curtain              : 1;
+    uint16_t has_down_curtain            : 1;
+
+
+
+
     uint8_t checksum;
     int release_y;
     int release_x;

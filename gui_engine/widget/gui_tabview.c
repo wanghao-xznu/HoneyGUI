@@ -92,7 +92,14 @@ static void input_prepare(gui_obj_t *obj)
 {
     touch_info_t *tp = tp_get_info();
     GUI_UNUSED(tp);
-    obj->focused = true;
+    gui_obj_skip_all_up_hold(obj);
+    gui_obj_skip_all_down_hold(obj);
+    gui_obj_skip_all_left_hold(obj);
+    gui_obj_skip_all_right_hold(obj);
+    obj->skip_tp_left_hold = false;
+    obj->skip_tp_right_hold = false;
+    obj->skip_tp_up_hold = false;
+    obj->skip_tp_down_hold = false;
 }
 
 static void tabview_prepare(gui_obj_t *obj)
@@ -110,15 +117,7 @@ static void tabview_prepare(gui_obj_t *obj)
         return;
     }
 
-    if (obj->focused == false)
-    {
-        return;
-    }
 
-    if (tabview->tp_disable)
-    {
-        return;
-    }
     if (tabview->cur_id.x != 0)
     {
         if (tp->type == TOUCH_HOLD_Y || tp->type == TOUCH_DOWN_SLIDE || tp->type == TOUCH_UP_SLIDE)
@@ -136,7 +135,14 @@ static void tabview_prepare(gui_obj_t *obj)
     switch (tp->type)
     {
     case TOUCH_HOLD_X:
-        gui_obj_clear_all_focusable(obj);
+        if ((obj->skip_tp_left_hold) && (tp->deltaX  < 0))
+        {
+            break;
+        }
+        if ((obj->skip_tp_right_hold) && (tp->deltaX  > 0))
+        {
+            break;
+        }
         if (tabview->loop)
         {
             this->release_x = tp->deltaX;
@@ -229,7 +235,18 @@ static void tabview_prepare(gui_obj_t *obj)
 
 
     case TOUCH_HOLD_Y:
-        gui_obj_clear_all_focusable(obj);
+        if ((obj->skip_tp_up_hold) && (tp->deltaY  < 0))
+        {
+            break;
+        }
+        if ((obj->skip_tp_down_hold) && (tp->deltaY  > 0))
+        {
+            break;
+        }
+        if ((obj->skip_tp_up_hold) && (obj->skip_tp_down_hold))
+        {
+            break;
+        }
         if (tabview->tab_cnt_down == 0 && tabview->tab_cnt_up == 0)
         {
             break;
@@ -253,7 +270,7 @@ static void tabview_prepare(gui_obj_t *obj)
         }
         break;
     case TOUCH_LEFT_SLIDE:
-        gui_obj_clear_all_focusable(obj);
+        gui_log("[TV]TOUCH_LEFT_SLIDE\n");
         if (tabview->tab_cnt_right == 0 && tabview->cur_id.x == 0)
         {
             break;
@@ -296,8 +313,7 @@ static void tabview_prepare(gui_obj_t *obj)
 
         break;
     case TOUCH_RIGHT_SLIDE:
-        gui_log("TOUCH_RIGHT_SLIDE0\n");
-        gui_obj_clear_all_focusable(obj);
+        gui_log("[TV]TOUCH_RIGHT_SLIDE\n");
         //when current tab is the end,come back to current tab if sliding.
         if (tabview->cur_id.x == tabview->tab_cnt_left)
         {
@@ -341,8 +357,7 @@ static void tabview_prepare(gui_obj_t *obj)
 
         break;
     case TOUCH_DOWN_SLIDE:
-        gui_log("TOUCH_DOWN_SLIDE\n");
-        gui_obj_clear_all_focusable(obj);
+        gui_log("[TV]TOUCH_DOWN_SLIDE\n");
         if (tabview->tab_cnt_up == 0 && tabview->cur_id.y == 0)
         {
             break;
@@ -357,8 +372,7 @@ static void tabview_prepare(gui_obj_t *obj)
         gui_obj_event_set(obj, GUI_EVENT_1);
         break;
     case TOUCH_UP_SLIDE:
-        gui_log("TOUCH_UP_SLIDE\n");
-        gui_obj_clear_all_focusable(obj);
+        gui_log("[TV]TOUCH_UP_SLIDE\n");
         if (tabview->tab_cnt_down == 0 && tabview->cur_id.y == 0)
         {
             break;
@@ -374,7 +388,6 @@ static void tabview_prepare(gui_obj_t *obj)
         break;
     case TOUCH_ORIGIN_FROM_X:
     case TOUCH_ORIGIN_FROM_Y:
-        gui_obj_clear_all_focusable(obj);
         break;
     default:
         break;
