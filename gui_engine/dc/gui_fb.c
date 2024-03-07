@@ -15,7 +15,12 @@
 #include <gui_obj.h>
 #include "gui_server.h"
 
-
+#define MAX_EVENT_CNT   10
+static gui_event_cb_t event_cb[MAX_EVENT_CNT];
+static gui_event_t event_code[MAX_EVENT_CNT];
+static void *event_obj[MAX_EVENT_CNT];
+static uint8_t event_cnt = 0;
+static bool fb_change = false;
 
 
 static bool obj_is_active(gui_obj_t *obj)
@@ -171,12 +176,6 @@ static void obj_draw_scan(gui_obj_t *obj)
 }
 
 
-#define MAX_EVENT_CNT   10
-static gui_event_cb_t event_cb[MAX_EVENT_CNT];
-static gui_event_t event_code[MAX_EVENT_CNT];
-static void *event_obj[MAX_EVENT_CNT];
-static uint8_t event_cnt = 0;
-
 static void obj_draw_end(gui_obj_t *obj)
 {
     gui_list_t *node = NULL;
@@ -295,7 +294,7 @@ static void gui_fb_draw(gui_obj_t *root)
     }
 }
 
-static bool fb_change = false;
+
 void gui_fb_change(void)
 {
     fb_change = true;

@@ -177,6 +177,12 @@ static void curtain_prepare(gui_obj_t *obj)
 
     matrix_translate(dx, dy, obj->matrix);
 
+    if(0/* the curtain cat initial postion*/)
+    //if(curtainview->cur_curtain == CURTAIN_MIDDLE)
+    {
+        obj->not_show = true;
+    }
+
 }
 
 
