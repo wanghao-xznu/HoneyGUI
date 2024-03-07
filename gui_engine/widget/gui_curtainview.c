@@ -113,6 +113,7 @@ static void input_prepare(gui_obj_t *obj)
     {
     case CURTAIN_MIDDLE:
         {
+            //gui_log("[%s]line = %d \n",obj->name, __LINE__);
             if (this->has_up_curtain == true)
             {
                 gui_obj_skip_all_down_hold(obj);
@@ -179,74 +180,53 @@ static void curtainview_prepare(gui_obj_t *obj)
     gui_curtain_t *c_down = NULL;
     gui_curtain_t *c_left = NULL;
     gui_curtain_t *c_right = NULL;
-    if (tp->released)
-    {
-        ext->release_flag = true;
-    }
-    if (tp->pressed)
-    {
-        ext->release_flag = false;
-    }
 
 
-    gui_list_for_each_safe(node, tmp, &obj->child_list)
+
+    switch (tp->type)
     {
-        gui_obj_t *obj = gui_list_entry(node, gui_obj_t, brother_list);
-        if (obj->type == CURTAIN)
+    case TOUCH_HOLD_X:
         {
-            gui_curtain_t *c = (void *)obj;
-            switch (c->orientation)
-            {
-            case CURTAIN_MIDDLE:
-                c_middle = c;
-                break;
-            case CURTAIN_UP:
-                c_up = c;
-                break;
-            case CURTAIN_DOWN:
-                c_down = c;
-                break;
-            case CURTAIN_LEFT:
-                c_left = c;
-                break;
-            case CURTAIN_RIGHT:
-                c_right = c;
-                break;
-            default:
-                break;
-            }
+            this->release_x = tp->deltaX;
+            break;
         }
-    }
-    if (ext->cur_curtain == CURTAIN_MIDDLE)
-    {
-        if (ext->init_flag)
+    case TOUCH_HOLD_Y:
         {
-            if (c_up)
-            {
-                GET_BASE(c_up)->not_show = true;
-            }
-            if (c_down)
-            {
-                GET_BASE(c_down)->not_show = true;
-            }
-            if (c_left)
-            {
-                GET_BASE(c_left)->not_show = true;
-            }
-            if (c_right)
-            {
-                GET_BASE(c_right)->not_show = true;
-            }
+            this->release_y = tp->deltaY;
+            break;
         }
-        ext->init_flag = true;
+    case TOUCH_LEFT_SLIDE:
+        {
+            break;
+        }
+    case TOUCH_RIGHT_SLIDE:
+        {
+            break;
+        }
+    case TOUCH_DOWN_SLIDE:
+        {
+            break;
+        }
+    case TOUCH_UP_SLIDE:
+        {
+            break;
+        }
+    case TOUCH_ORIGIN_FROM_X:
+        {
+            break;
+        }
+    case TOUCH_ORIGIN_FROM_Y:
+        {
+            break;
+        }
+    default:
+        break;
     }
-
-
+#if 0
     switch (ext->cur_curtain)
     {
     case CURTAIN_MIDDLE:
         {
-            obj->cover = false;
             if ((tp->type == TOUCH_HOLD_Y) || (tp->type == TOUCH_ORIGIN_FROM_Y) ||
                 (tp->type == TOUCH_DOWN_SLIDE) || (tp->type == TOUCH_UP_SLIDE) || ext->down_flag)
             {
@@ -514,6 +494,7 @@ static void curtainview_prepare(gui_obj_t *obj)
     default:
         break;
     }
+#endif
     if (this->release_x >= GUI_FRAME_STEP)
     {
         this->release_x -= GUI_FRAME_STEP;

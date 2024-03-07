@@ -36,6 +36,7 @@ static gui_app_t app_watch_ui =
         .x    = 0,
         .y    = 0,
         .parent = NULL,
+        .matrix = NULL,
     },
     .ui_design = design_app_watch_ui,
     .thread_entry = NULL,
@@ -54,7 +55,7 @@ static void design_app_watch_ui(gui_app_t *app)
     gui_font_mem_init(FONT_BIN);
 
     tabview_main = gui_tabview_create(&(app->screen), "tabview", 0, 0, 0, 0);
-    gui_tabview_set_style(tabview_main, REDUCTION);
+    gui_tabview_set_style(tabview_main, CLASSIC);
 
     tab_watchface = gui_tab_create(tabview_main, "tb_watchface",  0, 0, 0, 0, 0, 0);
     tab_player = gui_tab_create(tabview_main, "tab_player",      0, 0, 0, 0, 1, 0);

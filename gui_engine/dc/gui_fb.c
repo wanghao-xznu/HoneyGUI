@@ -203,9 +203,13 @@ static void obj_draw_end(gui_obj_t *obj)
             }
         }
 
-        matrix_identity(obj->matrix);
+        //matrix_identity(obj->matrix);
         obj->active = false;
         obj->not_show = false;
+        obj->skip_tp_left_hold = true;
+        obj->skip_tp_right_hold = true;
+        obj->skip_tp_up_hold = true;
+        obj->skip_tp_down_hold = true;
         obj_draw_end(obj);
     }
 }

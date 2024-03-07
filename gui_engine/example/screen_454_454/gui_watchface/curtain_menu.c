@@ -152,6 +152,6 @@ void design_curtain_menu(void *parent)
 
 
     gui_curtain_t *curtain_left_menu = gui_curtain_create(ct, "curtain_left_menu", 0, 0, 454, 454,
-                                                          CURTAIN_LEFT, 0.5f);
+                                                          CURTAIN_LEFT, 1.0f);
     gui_img_create_from_mem(curtain_left_menu, "", WATCH_BASE_GREY_70_ALPHA_BIN, 0, 0, 454, 454);
 }
