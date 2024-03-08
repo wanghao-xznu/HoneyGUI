@@ -90,6 +90,8 @@ typedef struct gui_text
     void *content;
     void *data;
     void *path;//!<  address or path
+    int16_t offset_x;
+    int16_t offset_y;
 } gui_text_t;
 
 /** @brief  text line structure */

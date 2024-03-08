@@ -54,8 +54,8 @@ static void design_app_watch_ui(gui_app_t *app)
 
     gui_font_mem_init(FONT_BIN);
 
-    tabview_main = gui_tabview_create(&(app->screen), "tabview", 0, 0, 0, 0);
-    gui_tabview_set_style(tabview_main, TAB_CUBE);
+    tabview_main = gui_tabview_create(&(app->screen), "tabview321", 0, 0, 0, 0);
+    gui_tabview_set_style(tabview_main, CLASSIC);
 
     tab_watchface = gui_tab_create(tabview_main, "tb_watchface",  0, 0, 0, 0, 0, 0);
     tab_player = gui_tab_create(tabview_main, "tab_player",      0, 0, 0, 0, 1, 0);

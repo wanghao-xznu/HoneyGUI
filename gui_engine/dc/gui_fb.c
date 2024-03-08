@@ -204,7 +204,6 @@ static void obj_draw_end(gui_obj_t *obj)
 
         //matrix_identity(obj->matrix);
         obj->active = false;
-        obj->not_show = false;
         obj->skip_tp_left_hold = true;
         obj->skip_tp_right_hold = true;
         obj->skip_tp_up_hold = true;
@@ -326,7 +325,7 @@ void gui_fb_disp(gui_obj_t *root)
     if (fb_change == true)
     {
         gui_fb_draw(root);
-        fb_change = false;
+        fb_change = true;//todo
         {
 
             int ms = gui_ms_get();
