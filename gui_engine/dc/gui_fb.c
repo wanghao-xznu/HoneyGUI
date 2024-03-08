@@ -125,10 +125,10 @@ static void obj_draw_prepare(gui_obj_t *object)
         {
             continue;
         }
-        if (obj->not_show)
-        {
-            continue;
-        }
+        // if (obj->not_show) //todo seems can comment it by howie
+        // {
+        //     continue;
+        // }
 
         obj->opacity_value = obj->parent->opacity_value;
 
@@ -204,6 +204,7 @@ static void obj_draw_end(gui_obj_t *obj)
 
         //matrix_identity(obj->matrix);
         obj->active = false;
+        //obj->not_show = false;// no need this insduction
         obj->skip_tp_left_hold = true;
         obj->skip_tp_right_hold = true;
         obj->skip_tp_up_hold = true;

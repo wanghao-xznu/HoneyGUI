@@ -105,7 +105,6 @@ void gui_tab_rotate(gui_obj_t *obj)
 
     gui_matrix_t rotate_3D;
     float rotate_degree = 90 * parent->release_x / (this->base.w / 2);
-    //rotate_degree += 90.0 * (this->id.x - parent->cur_id.x);
 
     matrix_compute_rotate(0, rotate_degree, 0, &rotate_3D);
 
@@ -133,15 +132,22 @@ void gui_tab_rotate(gui_obj_t *obj)
     //     obj->not_show = true;
     // }
 
-    matrix_translate((this->id.x - parent->cur_id.x) * (int)this->base.w, \
-                     (this->id.y - parent->cur_id.y) * (int)this->base.h, \
+    int32_t id_x = parent->cur_id.x;
+    int32_t id_y = parent->cur_id.y;
+    if (rotate_degree > 90)
+    {
+        id_x--;
+    }
+    if (rotate_degree < -90)
+    {
+        id_x++;
+    }
+
+
+    matrix_translate((this->id.x - id_x) * (int)this->base.w, \
+                     (this->id.y - id_y) * (int)this->base.h, \
                      obj->matrix);
-    // if (abs(this->id.x - parent->cur_id.x) == 1)
-    // {
-    //     matrix_translate(-(this->id.x - parent->cur_id.x) * (int)this->base.w, \
-    //                      -(this->id.y - parent->cur_id.y) * (int)this->base.h, \
-    //                      obj->matrix);
-    // }
+
     matrix_multiply(obj->matrix, &temp);
 }
 
