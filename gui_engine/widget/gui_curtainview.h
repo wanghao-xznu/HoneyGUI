@@ -97,7 +97,7 @@ typedef struct gui_curtainview
     uint16_t has_right_curtain           : 1;
     uint16_t has_up_curtain              : 1;
     uint16_t has_down_curtain            : 1;
-
+    uint16_t cur_curtain_flag            : 1;
 
 
 
